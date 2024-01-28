@@ -41,12 +41,14 @@ private:
     const std::size_t MAP_HEIGHT = map.size();
     MainChar player;
     
+    void movePlayer(char input);
+
+    void draw();
+
 public:
-    Game();
+    Game() {}
 
     ~Game() {}
 
     void run();
-
-    void draw();
 };

@@ -1,16 +1,17 @@
 #include <iostream>
+#include "position.hpp"
 
 class MainChar
 {
 private:
     int health = 100;
     char tile = '>';
-    std::size_t x = 1;
-    std::size_t y = 1;
+    Position position;
+    
 public:
     MainChar() {}
 
-    MainChar(std::size_t x, std::size_t y) : x(x), y(y) {}
+    MainChar(std::size_t x, std::size_t y) : position(x, y) {}
 
     ~MainChar() {}
 
@@ -28,12 +29,17 @@ public:
 
     std::size_t getX() const 
     {
-        return x;
+        return position.getX();
     }
 
     std::size_t getY() const 
     {
-        return y;
+        return position.getY();
+    }
+
+    Direction getDirection() const 
+    {
+        return position.getDirection();
     }
 
     /* <------------------------ Setters ------------------------> */
@@ -50,11 +56,23 @@ public:
 
     void setX(std::size_t newX) 
     {
-        x = newX;
+        position.setX(newX);
     }
 
     void setY(std::size_t newY) 
     {
-        y = newY;
+        position.setY(newY);
+    }
+
+    void setDirection(Direction newDirection) 
+    {
+        position.setDirection(newDirection);
+    }
+
+    /* <------------------------ Methods ------------------------> */
+
+    void move(Direction direction) 
+    {
+        position.move(direction);
     }
 };
