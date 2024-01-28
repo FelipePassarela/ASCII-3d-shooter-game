@@ -1,0 +1,20 @@
+cmake_minimum_required(VERSION 3.15)
+project(ASCII-shooter)
+
+set(CMAKE_CXX_STANDARD 23)
+# set(CMAKE_CXX_STANDARD_REQUIRED True) # Not needed
+
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
+file(GLOB_RECURSE SOURCES "source/*.cpp")
+file(GLOB_RECURSE HEADERS "include/*.hpp")
+
+include_directories(include)
+
+add_executable(ASCII-shooter-debug ${SOURCES} ${HEADERS})
+# add_executable(ASCII-shooter-release ${SOURCES} ${HEADERS})
+
+target_compile_options(ASCII-shooter-debug PRIVATE -Wall -Wextra -g -O0 -DDEBUG)
+# target_compile_options(ASCII-shooter-release PRIVATE -Wall -Wextra -DNDEBUG -O3)
+
+set_target_properties(ASCII-shooter-debug PROPERTIES OUTPUT_NAME "bin/ASCII-shooter-debug")
+# set_target_properties(ASCII-shooter-release PROPERTIES OUTPUT_NAME "bin/ASCII-shooter-release")
