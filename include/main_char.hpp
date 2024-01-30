@@ -1,17 +1,33 @@
+#ifndef MAIN_CHAR_HPP
+#define MAIN_CHAR_HPP
+
 #include <iostream>
-#include "position.hpp"
+#include "ray.hpp"
+
+enum class Direction
+{
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
+};
 
 class MainChar
 {
 private:
     int health = 100;
+    int x = 1;
+    int y = 1; 
     char tile = '>';
-    Position position;
-    
+    double angle = 0.0f;
+    double FOV = 3.14159 / 4;
+    double speed = 1.0f;
+    Ray ray;
+
 public:
     MainChar() {}
 
-    MainChar(std::size_t x, std::size_t y) : position(x, y) {}
+    MainChar(int x, int y) : x(x), y(y) {}
 
     ~MainChar() {}
 
@@ -29,17 +45,27 @@ public:
 
     std::size_t getX() const 
     {
-        return position.getX();
+        return x;
     }
 
     std::size_t getY() const 
     {
-        return position.getY();
+        return y;
     }
 
-    Direction getDirection() const 
+    double getAngle() const 
     {
-        return position.getDirection();
+        return angle;
+    }
+
+    double getFOV() const 
+    {
+        return FOV;
+    }
+
+    Ray getRay() const 
+    {
+        return ray;
     }
 
     /* <------------------------ Setters ------------------------> */
@@ -56,23 +82,29 @@ public:
 
     void setX(std::size_t newX) 
     {
-        position.setX(newX);
+        x = newX;
     }
 
     void setY(std::size_t newY) 
     {
-        position.setY(newY);
+        y = newY;
     }
 
-    void setDirection(Direction newDirection) 
+    void setAngle(double newAngle) 
     {
-        position.setDirection(newDirection);
+        angle = newAngle;
+    }
+
+    void setFOV(double newFOV) 
+    {
+        FOV = newFOV;
     }
 
     /* <------------------------ Methods ------------------------> */
 
-    void move(Direction direction) 
-    {
-        position.move(direction);
-    }
+    void move(Direction direction);
+
+    void moveBack(Direction direction);
 };
+
+#endif

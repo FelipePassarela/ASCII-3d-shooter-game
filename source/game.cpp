@@ -1,7 +1,10 @@
 #include "game.hpp"
+#include "constants.hpp"
 #include <thread>
 #include <chrono>
 #include <conio.h>
+#include <windows.h>
+#include <cmath>
 
 void Game::run()
 {
@@ -16,52 +19,94 @@ void Game::run()
 
         draw();
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(30));
+        std::this_thread::sleep_for(std::chrono::milliseconds(16));
     }
 }
 
 void Game::movePlayer(char input)
 {
+    Direction direction;
+
     switch (input)
     {
-    case 'w':
-        if (map[player.getY() - 1][player.getX()] != '#' && player.getY() > 0)
-            player.move(Direction::UP);
-        break;
-    case 'a':
-        if (map[player.getY()][player.getX() - 1] != '#' && player.getX() > 0)
-            player.move(Direction::LEFT);
-        break;
-    case 's':
-        if (map[player.getY() + 1][player.getX()] != '#' && player.getY() < MAP_HEIGHT - 1)
-            player.move(Direction::DOWN);
-        break;
-    case 'd':
-        if (map[player.getY()][player.getX() + 1] != '#' && player.getX() < MAP_WIDTH - 1)
-            player.move(Direction::RIGHT);
-        break;
+        case 'w':
+            direction = Direction::UP;
+            player.move(direction);
+            break;
+        case 'a':
+            direction = Direction::LEFT;
+            player.move(direction);
+            break;
+        case 's':
+            direction = Direction::DOWN;
+            player.move(direction);
+            break;
+        case 'd':
+            direction = Direction::RIGHT;
+            player.move(direction);
+            break;
     }
 
-    // if (_kbhit())            // NOTE: Util for going through portals
+    if (map[player.getY()][player.getX()] == '#')
+    {
+        player.moveBack(direction);
+    }
+
+    if (player.getAngle() > PI / 2 && player.getAngle() < 3 * PI / 2)
+    {
+        player.setTile('<');
+    } else
+    {
+        player.setTile('>');
+    }
+
+    player.getRay().castRay(player.getX(), player.getY(), player.getFOV(), map);
+
+    // if (_kbhit())                // NOTE: Util for going through portals
 }
 
-void Game::draw()
+void Game::draw() const
 {
     #ifdef _WIN32
     system("cls");
     #else
     system("clear");
     #endif
-    
+
+    std::vector<std::string> mapCopy = map;
+
+    for (std::pair<double, double> point : player.getRay().getPoints())
+    {
+        mapCopy[point.second][point.first] = 'o';
+    }
+    mapCopy[player.getY()][player.getX()] = player.getTile();
+
     for (std::size_t i = 0; i < MAP_HEIGHT; ++i)
     {
         for (std::size_t j = 0; j < MAP_WIDTH; ++j)
         {
-            if (player.getX() == j && player.getY() == i)
-                std::cout << player.getTile() << " ";
-            else
-                std::cout << map[i][j] << " ";
+            std::cout << mapCopy[i][j] << " ";
         }
         std::cout << std::endl;
     }
+
+    #ifdef DEBUG
+    std::cout << "X: " << player.getX() << std::endl;
+    std::cout << "Y: " << player.getY() << std::endl;
+    std::cout << "Angle: " << player.getAngle() / PI << "pi " << "Sin: " << sinf(player.getAngle()) << " Cos: " << cosf(player.getAngle()) << std::endl;
+    std::cout << "Ray Angle:" << player.getRay().getAngle() << std::endl;
+    std::cout << "Ray Distance: " << player.getRay().getDistance() << std::endl;
+    #endif
+}
+
+void Game::resetCursor() const
+{
+    #ifdef _WIN32
+    COORD cursorPosition;
+    cursorPosition.X = 0;
+    cursorPosition.Y = 0;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cursorPosition);
+    #else
+    std::cout << "\033[0;0H";
+    #endif
 }
