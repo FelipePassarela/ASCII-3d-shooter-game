@@ -10,7 +10,7 @@ private:
     double angle = 0.0f;
     double distance = 0.0f;
     const double steps = 0.1f;
-    std::vector<std::pair<double, double>> points;
+    std::vector<std::pair<int, int>> points;
 
 public:
     Ray() {}
@@ -25,7 +25,7 @@ public:
 
     double getDistance() const {    return distance;    }
 
-    std::vector<std::pair<double, double>> getPoints() const {    return points;    }
+    std::vector<std::pair<int, int>> getPoints() const {    return points;    }
 
     /* <------------------------ Setters ------------------------> */
 
@@ -33,7 +33,7 @@ public:
 
     void setDistance(double newDistance) {    distance = newDistance;    }
 
-    void setPoints(std::vector<std::pair<double, double>> newPoints) {    points = newPoints;    }
+    void setPoints(std::vector<std::pair<int, int>> newPoints) {    points = newPoints;    }
 
     /* <------------------------ Methods ------------------------> */
 

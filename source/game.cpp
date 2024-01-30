@@ -47,7 +47,7 @@ void Game::movePlayer(char input)
             break;
     }
 
-    if (map[player.getY()][player.getX()] == '#')
+    if (map[(int)player.getY()][(int)player.getX()] == '#')
     {
         player.moveBack(direction);
     }
@@ -65,7 +65,7 @@ void Game::movePlayer(char input)
     // if (_kbhit())                // NOTE: Util for going through portals
 }
 
-void Game::draw() const
+void Game::draw()
 {
     #ifdef _WIN32
     system("cls");
@@ -77,6 +77,8 @@ void Game::draw() const
 
     for (std::pair<double, double> point : player.getRay().getPoints())
     {
+        int x = (int)point.first;
+        int y = (int)point.second;
         mapCopy[point.second][point.first] = 'o';
     }
     mapCopy[player.getY()][player.getX()] = player.getTile();

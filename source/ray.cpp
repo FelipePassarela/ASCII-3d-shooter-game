@@ -3,18 +3,28 @@
 
 void Ray::castRay(double playerX, double playerY, double FOV, std::vector<std::string> map)
 {
-    double x = playerX;
-    double y = playerY;
+    // TODO: Fix this: Causing a segfault.
+    // int newX = playerX;
+    // int newY = playerY;
+    // int oldX =  newX;
+    // int oldY =  newY;
 
-    points.clear();
-    while (map[static_cast<int>(y)][static_cast<int>(x)] != '#')
-    {
-        x += sinf(angle) * steps;
-        y += cosf(angle) * steps;
+    // points.clear();
+    // while (map[newX][newY] != '#')
+    // {
+    //     distance += steps;
+        
+    //     newX = (int) (playerX + distance * cosf(angle));
+    //     newY = (int) (playerY + distance * sinf(angle));
 
-        points.push_back(std::make_pair(x, y));
-    }
+    //     if (newX != oldX || newY != oldY)
+    //     {
+    //         points.push_back(std::make_pair(newX, newY));
+    //     }
 
-    distance = sqrtf((x - playerX) * (x - playerX) + (y - playerY) * (y - playerY));
+    //     oldX = newX;
+    //     oldY = newY;
+    // }
+
     // distance *= cosf(angle - FOV / 2);
 }

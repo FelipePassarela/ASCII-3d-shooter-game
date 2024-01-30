@@ -1,5 +1,5 @@
-#ifndef MAIN_CHAR_HPP
-#define MAIN_CHAR_HPP
+#ifndef PLAYER_HPP
+#define PLAYER_HPP
 
 #include <iostream>
 #include "ray.hpp"
@@ -12,12 +12,12 @@ enum class Direction
     RIGHT
 };
 
-class MainChar
+class Player
 {
 private:
     int health = 100;
-    int x = 1;
-    int y = 1; 
+    double x = 1;
+    double y = 1;
     char tile = '>';
     double angle = 0.0f;
     double FOV = 3.14159 / 4;
@@ -25,77 +25,77 @@ private:
     Ray ray;
 
 public:
-    MainChar() {}
+    Player() {}
 
-    MainChar(int x, int y) : x(x), y(y) {}
+    Player(double x, double y) : x(x), y(y) {}
 
-    ~MainChar() {}
+    ~Player() {}
 
     /* <------------------------ Getters ------------------------> */
 
-    int getHealth() const 
+    int getHealth() const
     {
         return health;
     }
 
-    char getTile() const 
+    char getTile() const
     {
         return tile;
     }
 
-    std::size_t getX() const 
+    double getX() const
     {
         return x;
     }
 
-    std::size_t getY() const 
+    double getY() const
     {
         return y;
     }
 
-    double getAngle() const 
+    double getAngle() const
     {
         return angle;
     }
 
-    double getFOV() const 
+    double getFOV() const
     {
         return FOV;
     }
 
-    Ray getRay() const 
+    Ray& getRay()
     {
         return ray;
     }
 
     /* <------------------------ Setters ------------------------> */
 
-    void setHealth(int newHealth) 
+    void setHealth(int newHealth)
     {
         health = newHealth;
     }
 
-    void setTile(char newTile) 
+    void setTile(char newTile)
     {
         tile = newTile;
     }
 
-    void setX(std::size_t newX) 
+    void setX(double newX)
     {
         x = newX;
     }
 
-    void setY(std::size_t newY) 
+    void setY(double newY)
     {
         y = newY;
     }
 
-    void setAngle(double newAngle) 
+    void setAngle(double newAngle)
     {
         angle = newAngle;
     }
 
-    void setFOV(double newFOV) 
+    void setFOV(double newFOV)
     {
         FOV = newFOV;
     }
