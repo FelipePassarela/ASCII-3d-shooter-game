@@ -8,13 +8,13 @@ void Player::move(Direction direction)
     else if (direction == Direction::RIGHT)     angle -= PI / 20;
     else if (direction == Direction::UP)
     {
-        x += speed * cosf(angle);
-        y -= speed * sinf(angle);
-    } 
+        x = x + speed * cosf(angle);            // Formula: X = X0 + t * Dx. Source: https://en.wikipedia.org/wiki/Ray_casting
+        y = y - speed * sinf(angle);            // X0 is the initial position, t is the parameter (time in this context), and
+    }                                           // Dx is the direction vector.
     else if (direction == Direction::DOWN)
     {
-        x -= speed * cosf(angle);
-        y += speed * sinf(angle);
+        x = x - speed * cosf(angle);
+        y = y + speed * sinf(angle);
     }
 
     if (angle > 2 * PI)         angle -= 2 * PI;
