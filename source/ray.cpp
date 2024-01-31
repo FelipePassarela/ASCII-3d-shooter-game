@@ -5,7 +5,8 @@ void Ray::castRays(double playerX, double playerY, double playerA, double FOV, s
 {
     // TODO: Create a vector of rays, and then cast them all. It's better to create a function 
     //       to cast a single ray and other to cast all rays, so that the code is more 
-    //       readable and maintainable.
+    //       readable and maintainable. Also, this is necessary to render semi-3d scenes because
+    //       we will need the distance of each ray to the wall.
 
     angle = -playerA - FOV / 2.0;
     distance = 0.0f;
