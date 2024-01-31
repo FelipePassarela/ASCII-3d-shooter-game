@@ -105,6 +105,8 @@ public:
     void move(Direction direction);
 
     void moveBack(Direction direction);
+
+    void updateTile();
 };
 
 #endif

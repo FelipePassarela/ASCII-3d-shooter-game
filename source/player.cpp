@@ -34,3 +34,11 @@ void Player::moveBack(Direction direction)
         y -= speed * sinf(angle);
     }
 }
+
+void Player::updateTile()
+{
+    if (angle >= 7 * PI / 4 || angle < PI / 4)      tile = '>';
+    else if (angle < 3 * PI / 4)                    tile = '^';
+    else if (angle < 5 * PI / 4)                    tile = '<';
+    else if (angle < 7 * PI / 4)                    tile = 'v';
+}
