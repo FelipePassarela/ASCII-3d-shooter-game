@@ -90,9 +90,8 @@ void Game::draw()
     }
 
     #ifdef DEBUG
-    std::cout << std::fixed << std::setprecision(2); 
+    std::cout << std::setprecision(2);    // FIXME: Pi is displaying as 'pii'
     std::cout << "X=" << player.getX() << " Y=" << player.getY() << " A=" << player.getAngle() / PI << "pi" << std::endl;
-    // std::cout << "RayDist: " << player.getRay().getDistance() << std::endl;
     #endif
 }
 
