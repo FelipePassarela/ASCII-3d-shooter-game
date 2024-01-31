@@ -60,7 +60,7 @@ void Game::movePlayer(char input)
         player.setTile('>');
     }
 
-    player.getRay().castRay(player.getX(), player.getY(), player.getFOV(), map);
+    player.getRay().castRay(player.getX(), player.getY(), player.getAngle(), player.getFOV(), map);
 
     // if (_kbhit())                // NOTE: Util for going through portals
 }
@@ -75,11 +75,11 @@ void Game::draw()
 
     std::vector<std::string> mapCopy = map;
 
-    for (std::pair<double, double> point : player.getRay().getPoints())
+    for (std::pair<int, int> point : player.getRay().getPoints())
     {
-        int x = (int)point.first;
-        int y = (int)point.second;
-        mapCopy[point.second][point.first] = 'o';
+        int x = point.first;
+        int y = point.second;
+        mapCopy[y][x] = 'o';
     }
     mapCopy[player.getY()][player.getX()] = player.getTile();
 

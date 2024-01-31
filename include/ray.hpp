@@ -9,7 +9,7 @@ class Ray
 private:
     double angle = 0.0f;
     double distance = 0.0f;
-    const double steps = 0.1f;
+    const double stepSize = 0.1f;
     std::vector<std::pair<int, int>> points;
 
 public:
@@ -37,7 +37,7 @@ public:
 
     /* <------------------------ Methods ------------------------> */
 
-    void castRay(double playerX, double playerY, double FOV, std::vector<std::string> map);
+    void castRay(double playerX, double playerY, double playerA, double FOV, std::vector<std::string> map);
     
 };
 

@@ -1,30 +1,37 @@
 #include "ray.hpp"
 #include <cmath>
 
-void Ray::castRay(double playerX, double playerY, double FOV, std::vector<std::string> map)
+void Ray::castRay(double playerX, double playerY, double playerA, double FOV, std::vector<std::string> map)
 {
-    // TODO: Fix this: Causing a segfault.
-    // int newX = playerX;
-    // int newY = playerY;
-    // int oldX =  newX;
-    // int oldY =  newY;
+    angle = -playerA;
 
-    // points.clear();
-    // while (map[newX][newY] != '#')
-    // {
-    //     distance += steps;
+    double steps = 0.0f;
+    int newX = static_cast<int>(playerX);
+    int newY = static_cast<int>(playerY);
+    int oldX =  newX;
+    int oldY =  newY;
+
+    points.clear();
+    while (map[newY][newX] != '#')
+    {
+        steps += stepSize;
         
-    //     newX = (int) (playerX + distance * cosf(angle));
-    //     newY = (int) (playerY + distance * sinf(angle));
+        newX = static_cast<int>(playerX + steps * cosf(angle));
+        newY = static_cast<int>(playerY + steps * sinf(angle));
 
-    //     if (newX != oldX || newY != oldY)
-    //     {
-    //         points.push_back(std::make_pair(newX, newY));
-    //     }
+        if (newX < 0 || newX >= map[0].size() || newY < 0 || newY >= map.size())
+        {
+            break;
+        }
 
-    //     oldX = newX;
-    //     oldY = newY;
-    // }
+        if (newX != oldX || newY != oldY)
+        {
+            points.push_back(std::make_pair(newX, newY));
+        }
 
-    // distance *= cosf(angle - FOV / 2);
+        oldX = newX;
+        oldY = newY;
+    }
+
+    distance = steps * cosf(angle - FOV / 2);
 }
