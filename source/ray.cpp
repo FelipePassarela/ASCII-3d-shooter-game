@@ -3,8 +3,10 @@
 
 void Ray::castRays(double playerX, double playerY, double playerA, double FOV, std::vector<std::string> map)
 {
-    // TODO: Create a vector of rays, and then cast them all. This function should only cast one ray.
-    
+    // TODO: Create a vector of rays, and then cast them all. It's better to create a function 
+    //       to cast a single ray and other to cast all rays, so that the code is more 
+    //       readable and maintainable.
+
     angle = -playerA - FOV / 2.0;
     distance = 0.0f;
     points.clear();
