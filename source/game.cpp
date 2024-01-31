@@ -15,7 +15,6 @@ void Game::run()
     while (running)
     {
         char input = tolower(_getch());
-
         movePlayer(input);
 
         draw();
@@ -26,7 +25,7 @@ void Game::run()
 
 void Game::movePlayer(char input)
 {
-    Direction direction;
+    Direction direction = Direction::UP;
 
     switch (input)
     {
@@ -54,7 +53,7 @@ void Game::movePlayer(char input)
     }
 
     player.updateTile();
-    player.getRay().castRay(player.getX(), player.getY(), player.getAngle(), player.getFOV(), map);
+    player.getRay().castRays(player.getX(), player.getY(), player.getAngle(), player.getFOV(), map);
 
     // if (_kbhit())                // NOTE: Util for going through portals
 }
@@ -66,6 +65,7 @@ void Game::draw()
     std::vector<std::string> mapCopy = map;
     mapCopy[player.getY()][player.getX()] = player.getTile();
 
+    // Draw the player's ray
     for (std::pair<int, int> point : player.getRay().getPoints())
     {
         int x = point.first;
@@ -79,6 +79,7 @@ void Game::draw()
             mapCopy[y][x] = '-';
     }
 
+    // Draw the map
     for (std::size_t i = 0; i < MAP_HEIGHT; ++i)
     {
         for (std::size_t j = 0; j < MAP_WIDTH; ++j)

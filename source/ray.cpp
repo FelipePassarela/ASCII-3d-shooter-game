@@ -1,7 +1,7 @@
 #include "ray.hpp"
 #include <cmath>
 
-void Ray::castRay(double playerX, double playerY, double playerA, double FOV, std::vector<std::string> map)
+void Ray::castRays(double playerX, double playerY, double playerA, double FOV, std::vector<std::string> map)
 {
     angle = -playerA - FOV / 2.0;
     distance = 0.0f;

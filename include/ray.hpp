@@ -22,24 +22,24 @@ public:
 
     /* <------------------------ Getters ------------------------> */
 
-    double getAngle() const {    return angle;    }
+    double getAngle() const { return angle; }
 
-    double getDistance() const {    return distance;    }
+    double getDistance() const { return distance; }
 
-    std::vector<std::pair<int, int>> getPoints() const {    return points;    }
+    std::vector<std::pair<int, int>> getPoints() const { return points; }
 
     /* <------------------------ Setters ------------------------> */
 
-    void setAngle(double newAngle) {    angle = newAngle;    }
+    void setAngle(double newAngle) { angle = newAngle; }
 
-    void setDistance(double newDistance) {    distance = newDistance;    }
+    void setDistance(double newDistance) { distance = newDistance; }
 
-    void setPoints(std::vector<std::pair<int, int>> newPoints) {    points = newPoints;    }
+    void setPoints(std::vector<std::pair<int, int>> newPoints) { points = newPoints; }
 
     /* <------------------------ Methods ------------------------> */
 
-    void castRay(double playerX, double playerY, double playerA, double FOV, std::vector<std::string> map);
-    
+    void castRays(double playerX, double playerY, double playerA, double FOV, std::vector<std::string> map);
+
 };
 
 #endif
