@@ -9,7 +9,8 @@ class Ray
 private:
     double angle = 0.0f;
     double distance = 0.0f;
-    const double stepSize = 0.1f;
+    const double stepDistance = 0.1f;
+    const double stepAngle = 0.01f;
     std::vector<std::pair<int, int>> points;
 
 public:

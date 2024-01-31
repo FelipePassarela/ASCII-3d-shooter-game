@@ -76,7 +76,7 @@ void Game::draw()
         double distance = sqrt(dx * dx + dy * dy);
 
         if (distance > 2.5)           // Draw only points that are far enough from the player
-            mapCopy[y][x] = 'o';
+            mapCopy[y][x] = '-';
     }
 
     for (std::size_t i = 0; i < MAP_HEIGHT; ++i)

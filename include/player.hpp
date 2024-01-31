@@ -20,7 +20,7 @@ private:
     double y = 1;
     char tile = '>';
     double angle = 0.0f;
-    double FOV = 3.14159 / 4;
+    double FOV = 3.14159 / 5;
     double speed = 1.0f;
     Ray ray;
 
