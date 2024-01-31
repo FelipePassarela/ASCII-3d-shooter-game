@@ -5,6 +5,7 @@
 #include <conio.h>
 #include <windows.h>
 #include <cmath>
+#include <iomanip>
 
 void Game::run()
 {
@@ -19,7 +20,7 @@ void Game::run()
 
         draw();
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(16));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }
 
@@ -52,14 +53,7 @@ void Game::movePlayer(char input)
         player.moveBack(direction);
     }
 
-    if (player.getAngle() > PI / 2 && player.getAngle() < 3 * PI / 2)
-    {
-        player.setTile('<');
-    } else
-    {
-        player.setTile('>');
-    }
-
+    player.updateTile();
     player.getRay().castRay(player.getX(), player.getY(), player.getAngle(), player.getFOV(), map);
 
     // if (_kbhit())                // NOTE: Util for going through portals
@@ -67,21 +61,23 @@ void Game::movePlayer(char input)
 
 void Game::draw()
 {
-    #ifdef _WIN32
-    system("cls");
-    #else
-    system("clear");
-    #endif
+    resetCursor();
 
     std::vector<std::string> mapCopy = map;
+    mapCopy[player.getY()][player.getX()] = player.getTile();
 
     for (std::pair<int, int> point : player.getRay().getPoints())
     {
         int x = point.first;
         int y = point.second;
-        mapCopy[y][x] = 'o';
+
+        double dx = x - player.getX();
+        double dy = y - player.getY();
+        double distance = sqrt(dx * dx + dy * dy);
+
+        if (distance > 2.5)           // Draw only points that are far enough from the player
+            mapCopy[y][x] = 'o';
     }
-    mapCopy[player.getY()][player.getX()] = player.getTile();
 
     for (std::size_t i = 0; i < MAP_HEIGHT; ++i)
     {
@@ -93,11 +89,9 @@ void Game::draw()
     }
 
     #ifdef DEBUG
-    std::cout << "X: " << player.getX() << std::endl;
-    std::cout << "Y: " << player.getY() << std::endl;
-    std::cout << "Angle: " << player.getAngle() / PI << "pi " << "Sin: " << sinf(player.getAngle()) << " Cos: " << cosf(player.getAngle()) << std::endl;
-    std::cout << "Ray Angle:" << player.getRay().getAngle() << std::endl;
-    std::cout << "Ray Distance: " << player.getRay().getDistance() << std::endl;
+    std::cout << std::fixed << std::setprecision(2); 
+    std::cout << "X=" << player.getX() << " Y=" << player.getY() << " A=" << player.getAngle() / PI << "pi" << std::endl;
+    std::cout << "RayDist: " << player.getRay().getDistance() << std::endl;
     #endif
 }
 

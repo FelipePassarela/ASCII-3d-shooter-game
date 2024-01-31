@@ -5,7 +5,7 @@ void Ray::castRay(double playerX, double playerY, double playerA, double FOV, st
 {
     angle = -playerA;
 
-    double steps = 0.0f;
+    distance = 0.0f;
     int newX = static_cast<int>(playerX);
     int newY = static_cast<int>(playerY);
     int oldX =  newX;
@@ -14,10 +14,10 @@ void Ray::castRay(double playerX, double playerY, double playerA, double FOV, st
     points.clear();
     while (true)
     {
-        steps += stepSize;
-        
-        newX = static_cast<int>(playerX + steps * cosf(angle));
-        newY = static_cast<int>(playerY + steps * sinf(angle));
+        distance += stepSize;
+
+        newX = static_cast<int>(playerX + distance * cosf(angle));      // Formula: X = X0 + t * Dx. Source: https://en.wikipedia.org/wiki/Ray_casting. X0 is the  
+        newY = static_cast<int>(playerY + distance * sinf(angle));      // initial position, t is the parameter (distance here), and Dx is the direction vector.
 
         if ((newX < 0 || newX >= map[0].size() || newY < 0 || newY >= map.size()) ||
             (map[newY][newX] == '#'))
@@ -34,5 +34,5 @@ void Ray::castRay(double playerX, double playerY, double playerA, double FOV, st
         oldY = newY;
     }
 
-    distance = steps * cosf(angle - FOV / 2);
+    // distance *= cosf(playerA - angle); // Fish eye correction
 }
