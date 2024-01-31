@@ -4,8 +4,8 @@
 
 void Player::move(Direction direction)
 {
-    if (direction == Direction::LEFT)           angle += PI / 20;
-    else if (direction == Direction::RIGHT)     angle -= PI / 20;
+    if (direction == Direction::LEFT)           angle += (PI / 20) * rotationSpeed;
+    else if (direction == Direction::RIGHT)     angle -= (PI / 20) * rotationSpeed;
     else if (direction == Direction::UP)
     {
         x = x + speed * cosf(angle);            // Formula: X = X0 + t * Dx. Source: https://en.wikipedia.org/wiki/Ray_casting

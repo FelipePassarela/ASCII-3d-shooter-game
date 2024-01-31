@@ -21,7 +21,8 @@ private:
     char tile = '>';
     double angle = 0.0f;
     double FOV = 3.14159 / 5;
-    double speed = 1.0f;
+    double speed = 5.0f;
+    double rotationSpeed = 4.0f;
     Ray ray;
 
 public:
