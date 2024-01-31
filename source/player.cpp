@@ -19,6 +19,8 @@ void Player::move(Direction direction)
 
     if (angle > 2 * PI)         angle -= 2 * PI;
     else if (angle < 0)         angle += 2 * PI;
+
+    updateTile();
 }
 
 void Player::moveBack(Direction direction)

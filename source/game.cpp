@@ -31,28 +31,24 @@ void Game::movePlayer(char input)
     {
         case 'w':
             direction = Direction::UP;
-            player.move(direction);
             break;
         case 'a':
             direction = Direction::LEFT;
-            player.move(direction);
             break;
         case 's':
             direction = Direction::DOWN;
-            player.move(direction);
             break;
         case 'd':
             direction = Direction::RIGHT;
-            player.move(direction);
             break;
     }
 
+    player.move(direction);
     if (map[(int)player.getY()][(int)player.getX()] == '#')
     {
         player.moveBack(direction);
     }
 
-    player.updateTile();
     player.getRay().castRays(player.getX(), player.getY(), player.getAngle(), player.getFOV(), map);
 
     // if (_kbhit())                // NOTE: Util for going through portals
