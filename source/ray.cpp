@@ -12,14 +12,15 @@ void Ray::castRay(double playerX, double playerY, double playerA, double FOV, st
     int oldY =  newY;
 
     points.clear();
-    while (map[newY][newX] != '#')
+    while (true)
     {
         steps += stepSize;
         
         newX = static_cast<int>(playerX + steps * cosf(angle));
         newY = static_cast<int>(playerY + steps * sinf(angle));
 
-        if (newX < 0 || newX >= map[0].size() || newY < 0 || newY >= map.size())
+        if ((newX < 0 || newX >= map[0].size() || newY < 0 || newY >= map.size()) ||
+            (map[newY][newX] == '#'))
         {
             break;
         }
