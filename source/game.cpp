@@ -25,7 +25,7 @@ void Game::run()
 
 void Game::movePlayer(char input)
 {
-    Direction direction = Direction::UP;
+    Direction direction = Direction::NONE;
 
     switch (input)
     {
@@ -40,6 +40,9 @@ void Game::movePlayer(char input)
             break;
         case 'd':
             direction = Direction::RIGHT;
+            break;
+        case ' ':
+            player.setFOV(player.getFOV() > 2 * PI ? 0 : player.getFOV() + PI / 16); 
             break;
     }
 
@@ -86,8 +89,7 @@ void Game::draw()
     }
 
     #ifdef DEBUG
-    std::cout << std::setprecision(2);    // FIXME: Pi is displaying as 'pii'
-    std::cout << "X=" << player.getX() << " Y=" << player.getY() << " A=" << player.getAngle() / PI << "pi" << std::endl;
+    printf("X=%05.2f Y=%05.2f A=%05.2fpi\n", player.getX(), player.getY(), player.getAngle() / PI);
     #endif
 }
 

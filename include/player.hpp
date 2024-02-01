@@ -3,13 +3,15 @@
 
 #include <iostream>
 #include "ray.hpp"
+#include "constants.hpp"
 
 enum class Direction
 {
     UP,
     DOWN,
     LEFT,
-    RIGHT
+    RIGHT,
+    NONE
 };
 
 class Player
@@ -20,7 +22,7 @@ private:
     double y = 1;
     char tile = '>';
     double angle = 0.0f;
-    double FOV = 3.14159 / 5;
+    double FOV = PI / 4;
     double speed = 1.15f;
     double rotationSpeed = 1.2f;
     Ray ray;
