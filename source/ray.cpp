@@ -23,16 +23,16 @@ void Ray::castRays(double playerX, double playerY, double playerA, double FOV, s
         {
             distance += stepDistance;
 
-            newX = static_cast<int>(playerX + distance * cosf(angle));      // Formula: X = X0 + t * Dx. Source: https://en.wikipedia.org/wiki/Ray_casting. X0 is the
-            newY = static_cast<int>(playerY + distance * sinf(angle));      // initial position, t is the parameter (distance here), and Dx is the direction vector.
+            newX = static_cast<int>(playerX + distance * cosf(angle));      // Formula: X = X0 + t * Dx. Source: https://en.wikipedia.org/wiki/Ray_casting. 
+            newY = static_cast<int>(playerY + distance * sinf(angle));      // X0 is the initial position, t is the parameter (distance here), and Dx is 
+                                                                            // the direction vector.
 
             if ((newX < 0 || newX >= map[0].size() || newY < 0 || newY >= map.size()) ||
                 (map[newY][newX] == '#'))
             {
                 break;
             }
-
-            if (newX != oldX || newY != oldY)
+            else if (newX != oldX || newY != oldY)
             {
                 points.push_back(std::make_pair(newX, newY));
             }
