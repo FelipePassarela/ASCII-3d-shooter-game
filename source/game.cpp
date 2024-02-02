@@ -80,7 +80,7 @@ void Game::draw()
         }
     }
 
-    mapCopy[player.getY()][player.getX()] = player.getTile();
+    mapCopy[(int)player.getY()][(int)player.getX()] = player.getTile();
 
     // Draw the map
     for (std::size_t i = 0; i < MAP_HEIGHT; ++i)
