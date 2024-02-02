@@ -44,3 +44,17 @@ void Player::updateTile()
     else if (angle < 5 * PI / 4)                    tile = '<';
     else if (angle < 7 * PI / 4)                    tile = 'v';
 }
+
+void Player::castRays(std::vector<std::string> map)
+{
+    rays.clear();
+
+    double angleOffset = -FOV / 2;
+    while (angleOffset < FOV / 2)
+    {
+        Ray ray(angle + angleOffset);
+        ray.castRay(x, y, angle, map);
+        rays.push_back(ray);
+        angleOffset += PI / 180;
+    }
+}

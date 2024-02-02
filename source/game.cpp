@@ -52,7 +52,7 @@ void Game::movePlayer(char input)
         player.moveBack(direction);
     }
 
-    player.getRay().castRays(player.getX(), player.getY(), player.getAngle(), player.getFOV(), map);
+    player.castRays(map);
 
     // if (_kbhit())                // NOTE: Util for going through portals
 }
@@ -64,17 +64,20 @@ void Game::draw()
     std::vector<std::string> mapCopy = map;
 
     // Draw the player's ray
-    for (std::pair<int, int> point : player.getRay().getPoints())
+    for (Ray ray : player.getRays())
     {
-        int rayX = point.first;
-        int rayY = point.second;
+        for (std::pair<int, int> point : ray.getPoints())
+        {
+            int rayX = point.first;
+            int rayY = point.second;
 
-        int dx = static_cast<int> (rayX - player.getX());
-        int dy = static_cast<int> (rayY - player.getY());
-        double distance = sqrt(dx * dx + dy * dy);
+            int dx = static_cast<int> (rayX - player.getX());
+            int dy = static_cast<int> (rayY - player.getY());
+            double distance = sqrt(dx * dx + dy * dy);
 
-        if (distance > 2.5)           // Draw only points that are far enough from the player
-            mapCopy[rayY][rayX] = '-';
+            if (distance > 2.5)           // Draw only points that are far enough from the player
+                mapCopy[rayY][rayX] = '-';
+        }
     }
 
     mapCopy[player.getY()][player.getX()] = player.getTile();

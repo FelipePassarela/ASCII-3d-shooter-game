@@ -38,7 +38,15 @@ public:
 
     /* <------------------------ Methods ------------------------> */
 
-    void castRays(double playerX, double playerY, double playerA, double FOV, std::vector<std::string> map);
+    /**
+     * Casts a ray from the player's position in a given direction and checks for collisions with the map.
+     * 
+     * @param[out] playerX The x-coordinate of the player's position.
+     * @param[out] playerY The y-coordinate of the player's position.
+     * @param[out] playerA The angle of the player's view.
+     * @param[out] map The map containing the game environment.
+     */
+    void castRay(double playerX, double playerY, double playerA, std::vector<std::string> map);
 
 };
 
