@@ -62,21 +62,22 @@ void Game::draw()
     resetCursor();
 
     std::vector<std::string> mapCopy = map;
-    mapCopy[player.getY()][player.getX()] = player.getTile();
 
     // Draw the player's ray
     for (std::pair<int, int> point : player.getRay().getPoints())
     {
-        int x = point.first;
-        int y = point.second;
+        int rayX = point.first;
+        int rayY = point.second;
 
-        double dx = x - player.getX();
-        double dy = y - player.getY();
+        int dx = static_cast<int> (rayX - player.getX());
+        int dy = static_cast<int> (rayY - player.getY());
         double distance = sqrt(dx * dx + dy * dy);
 
         if (distance > 2.5)           // Draw only points that are far enough from the player
-            mapCopy[y][x] = '-';
+            mapCopy[rayY][rayX] = '-';
     }
+
+    mapCopy[player.getY()][player.getX()] = player.getTile();
 
     // Draw the map
     for (std::size_t i = 0; i < MAP_HEIGHT; ++i)
