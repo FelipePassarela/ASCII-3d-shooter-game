@@ -49,8 +49,6 @@ private:
 
     void draw(wchar_t* screen, HANDLE hConsole, DWORD dwBytesWritten);
 
-    void resetCursor() const;
-
 public:
     Game() {}
 

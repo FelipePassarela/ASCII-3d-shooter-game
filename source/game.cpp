@@ -20,6 +20,7 @@ void Game::run()
     while (running)
     {
         movePlayer();
+        player.castRays(map);
 
         draw(screen, hConsole, dwBytesWritten);
 
@@ -57,8 +58,6 @@ void Game::movePlayer()
     {
         player.moveBack(direction);
     }
-
-    player.castRays(map);
 }
 
 void Game::draw(wchar_t* screen, HANDLE hConsole, DWORD dwBytesWritten)
@@ -102,16 +101,4 @@ void Game::draw(wchar_t* screen, HANDLE hConsole, DWORD dwBytesWritten)
 
     screen[SCREEN_WIDTH * SCREEN_HEIGHT - 1] = '\0';
     WriteConsoleOutputCharacterW(hConsole, screen, SCREEN_WIDTH * SCREEN_HEIGHT, { 0, 0 }, &dwBytesWritten);
-}
-
-void Game::resetCursor() const
-{
-    #ifdef _WIN32
-    COORD cursorPosition;
-    cursorPosition.X = 0;
-    cursorPosition.Y = 0;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cursorPosition);
-    #else
-    std::cout << "\033[0;0H";
-    #endif
 }
