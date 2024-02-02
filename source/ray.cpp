@@ -11,7 +11,7 @@ void Ray::castRay(double playerX, double playerY, double playerA, std::vector<st
     bool hit = false;
     while (!hit)
     {
-        distance += stepDistance;
+        distance += 0.1;
 
         newX = static_cast<int>(playerX + distance * cosf(angle));      // Formula: X = X0 + t * Dx. Source: https://en.wikipedia.org/wiki/Ray_casting. 
         newY = static_cast<int>(playerY - distance * sinf(angle));      // X0 is the initial position, t is the parameter (distance here), and Dx is 
