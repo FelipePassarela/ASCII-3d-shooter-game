@@ -44,7 +44,7 @@ public:
      * @param[out] playerA The angle of the player's view.
      * @param[out] map The map containing the game environment.
      */
-    void castRay(double playerX, double playerY, double playerA, std::vector<std::string> map);
+    void castRay(double playerX, double playerY, double playerA, std::vector<std::wstring> map);
 
 };
 

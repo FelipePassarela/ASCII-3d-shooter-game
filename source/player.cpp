@@ -45,7 +45,7 @@ void Player::updateTile()
     else if (angle < 7 * PI / 4)                    tile = 'v';
 }
 
-void Player::castRays(std::vector<std::string> map)
+void Player::castRays(std::vector<std::wstring> map)
 {
     rays.clear();
 

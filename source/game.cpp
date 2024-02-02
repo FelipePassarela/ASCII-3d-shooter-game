@@ -3,13 +3,18 @@
 #include <thread>
 #include <chrono>
 #include <conio.h>
-#include <windows.h>
 #include <cmath>
 #include <iomanip>
 
 void Game::run()
 {
-    draw();
+    wchar_t* screen = new wchar_t[SCREEN_WIDTH * SCREEN_HEIGHT];
+    std::fill(screen, screen + SCREEN_WIDTH * SCREEN_HEIGHT, L' ');
+    HANDLE hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+    SetConsoleActiveScreenBuffer(hConsole);
+    DWORD dwBytesWritten = 0;
+
+    draw(screen, hConsole, dwBytesWritten);
 
     bool running = true;
     while (running)
@@ -17,9 +22,9 @@ void Game::run()
         char input = tolower(_getch());
         movePlayer(input);
 
-        draw();
+        draw(screen, hConsole, dwBytesWritten);
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(16));
     }
 }
 
@@ -57,13 +62,18 @@ void Game::movePlayer(char input)
     // if (_kbhit())                // NOTE: Util for going through portals
 }
 
-void Game::draw()
+void Game::draw(wchar_t* screen, HANDLE hConsole, DWORD dwBytesWritten)
 {
-    resetCursor();
+    // Draw the map
+    for (std::size_t i = 0; i < MAP_HEIGHT; ++i)
+    {
+        for (std::size_t j = 0; j < MAP_WIDTH; ++j)
+        {
+            screen[i * SCREEN_WIDTH + j] = map[i][j];
+        }
+    }
 
-    std::vector<std::string> mapCopy = map;
-
-    // Draw the player's ray
+    // Draw the player's rays
     for (Ray ray : player.getRays())
     {
         for (std::pair<int, int> point : ray.getPoints())
@@ -76,27 +86,23 @@ void Game::draw()
             double distance = sqrt(dx * dx + dy * dy);
 
             if (distance > 2.5)           // Draw only points that are far enough from the player
-                mapCopy[rayY][rayX] = '-';
+                screen[rayY * SCREEN_WIDTH + rayX] = '-';
         }
     }
 
-    mapCopy[(int)player.getY()][(int)player.getX()] = player.getTile();
-
-    // Draw the map
-    for (std::size_t i = 0; i < MAP_HEIGHT; ++i)
-    {
-        for (std::size_t j = 0; j < MAP_WIDTH; ++j)
-        {
-            std::cout << mapCopy[i][j] << " ";
-        }
-        std::cout << std::endl;
-    }
-
-    std::cout << "WASD to move, SPACE to change FOV" << std::endl;
+    screen[(int)player.getY() * SCREEN_WIDTH + (int)player.getX()] = player.getTile();
 
     #ifdef DEBUG
-    printf("X=%05.2f Y=%05.2f A=%05.2fpi\n", player.getX(), player.getY(), player.getAngle() / PI);
+    wchar_t* debug = new wchar_t[SCREEN_WIDTH];
+    swprintf_s(debug, SCREEN_WIDTH, L"X=%05.2f Y=%05.2f A=%05.2fpi", player.getX(), player.getY(), player.getAngle() / PI);
+    for (std::size_t i = 0; i < wcslen(debug); ++i)
+    {
+        screen[MAP_HEIGHT * SCREEN_WIDTH + i] = debug[i];
+    }
     #endif
+
+    screen[SCREEN_WIDTH * SCREEN_HEIGHT - 1] = '\0';
+    WriteConsoleOutputCharacterW(hConsole, screen, SCREEN_WIDTH * SCREEN_HEIGHT, { 0, 0 }, &dwBytesWritten);
 }
 
 void Game::resetCursor() const

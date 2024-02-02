@@ -1,7 +1,7 @@
 #include "ray.hpp"
 #include <cmath>
 
-void Ray::castRay(double playerX, double playerY, double playerA, std::vector<std::string> map)
+void Ray::castRay(double playerX, double playerY, double playerA, std::vector<std::wstring> map)
 {
     int newX = static_cast<int>(playerX);
     int newY = static_cast<int>(playerY);
