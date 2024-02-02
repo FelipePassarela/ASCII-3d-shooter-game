@@ -25,7 +25,7 @@ private:
     double FOV = PI / 4;
     double speed = 1.15f;
     double rotationSpeed = 1.2f;
-    Ray ray;
+    std::vector<Ray> rays;
 
 public:
     Player() {}
@@ -66,9 +66,9 @@ public:
         return FOV;
     }
 
-    Ray& getRay()
+    std::vector<Ray> getRays() const
     {
-        return ray;
+        return rays;
     }
 
     /* <------------------------ Setters ------------------------> */
@@ -110,6 +110,17 @@ public:
     void moveBack(Direction direction);
 
     void updateTile();
+
+    /**
+     * @brief Casts rays to detect collisions with the game map.
+     * 
+     * This function takes a vector of strings representing the game map and casts rays
+     * to detect collisions with walls or other objects in the map. It is used to determine
+     * the visibility of the player in the game world.
+     * 
+     * @param[out] map The game map represented as a vector of strings.
+     */
+    void castRays(std::vector<std::string> map);
 };
 
 #endif
