@@ -45,7 +45,7 @@ private:
     const std::size_t SCREEN_HEIGHT = 40;
     Player player;
     
-    void movePlayer(char input);
+    void movePlayer();
 
     void draw(wchar_t* screen, HANDLE hConsole, DWORD dwBytesWritten);
 

@@ -19,8 +19,7 @@ void Game::run()
     bool running = true;
     while (running)
     {
-        char input = tolower(_getch());
-        movePlayer(input);
+        movePlayer();
 
         draw(screen, hConsole, dwBytesWritten);
 
@@ -28,27 +27,29 @@ void Game::run()
     }
 }
 
-void Game::movePlayer(char input)
+void Game::movePlayer()
 {
     Direction direction = Direction::NONE;
 
-    switch (input)
+    if (GetAsyncKeyState('W') & 0x8000)
     {
-        case 'w':
-            direction = Direction::UP;
-            break;
-        case 'a':
-            direction = Direction::LEFT;
-            break;
-        case 's':
-            direction = Direction::DOWN;
-            break;
-        case 'd':
-            direction = Direction::RIGHT;
-            break;
-        case ' ':
-            player.setFOV(player.getFOV() > 2 * PI ? 0 : player.getFOV() + PI / 16); 
-            break;
+        direction = Direction::UP;
+    }
+    if (GetAsyncKeyState('A') & 0x8000)
+    {
+        direction = Direction::LEFT;
+    }
+    if (GetAsyncKeyState('S') & 0x8000)
+    {
+        direction = Direction::DOWN;
+    }
+    if (GetAsyncKeyState('D') & 0x8000)
+    {
+        direction = Direction::RIGHT;
+    }
+    if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+    {
+        player.setFOV(player.getFOV() > 2 * PI ? 0 : player.getFOV() + PI / 16);
     }
 
     player.move(direction);
@@ -58,8 +59,6 @@ void Game::movePlayer(char input)
     }
 
     player.castRays(map);
-
-    // if (_kbhit())                // NOTE: Util for going through portals
 }
 
 void Game::draw(wchar_t* screen, HANDLE hConsole, DWORD dwBytesWritten)
