@@ -7,11 +7,11 @@
 
 enum class Direction
 {
+    NONE,
     UP,
     DOWN,
     LEFT,
     RIGHT,
-    NONE
 };
 
 class Player
