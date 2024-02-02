@@ -1,3 +1,5 @@
+// TODO: Document all the code
+
 #include <iostream>
 #include "game.hpp"
 
