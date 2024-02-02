@@ -92,6 +92,8 @@ void Game::draw()
         std::cout << std::endl;
     }
 
+    std::cout << "WASD to move, SPACE to change FOV" << std::endl;
+
     #ifdef DEBUG
     printf("X=%05.2f Y=%05.2f A=%05.2fpi\n", player.getX(), player.getY(), player.getAngle() / PI);
     #endif
