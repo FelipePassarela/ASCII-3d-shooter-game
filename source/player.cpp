@@ -7,8 +7,8 @@ void Player::move(Direction direction, double deltaTime)
     double correctedRotationSpeed = rotationSpeed * deltaTime;
     double correctedSpeed = speed * deltaTime;
 
-    if (direction == Direction::LEFT)           angle += (PI / 20) * correctedRotationSpeed;
-    else if (direction == Direction::RIGHT)     angle -= (PI / 20) * correctedRotationSpeed;
+    if (direction == Direction::LEFT)           angle += correctedRotationSpeed;
+    else if (direction == Direction::RIGHT)     angle -= correctedRotationSpeed;
     else if (direction == Direction::UP)
     {
         x = x + correctedSpeed * cosf(angle);  // Multiplying by 1.5 because horizontal movement is slower than vertical on console.                                           
@@ -48,6 +48,6 @@ void Player::updateTile()
 
 void Player::increaseFOV(double deltaTime)
 {
-    FOV += PI / 16 * deltaTime * rotationSpeed;
+    FOV += deltaTime * rotationSpeed;
     if (FOV > 2 * PI)   FOV = 0;
 }

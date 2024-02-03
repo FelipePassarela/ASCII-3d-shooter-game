@@ -24,7 +24,7 @@ private:
     double angle = 0.0f;
     double FOV = PI / 4;
     double speed = 5.0f;
-    double rotationSpeed = speed * 2.0f;
+    double rotationSpeed = speed * 0.75f;
     std::vector<Ray> rays;
 
 public:
