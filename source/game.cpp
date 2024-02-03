@@ -8,7 +8,6 @@
 void Game::run()
 {
     wchar_t* screen = new wchar_t[SCREEN_WIDTH * SCREEN_HEIGHT];
-    std::fill(screen, screen + SCREEN_WIDTH * SCREEN_HEIGHT, L' ');
     HANDLE hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
     SetConsoleActiveScreenBuffer(hConsole);
     DWORD dwBytesWritten = 0;
@@ -57,7 +56,7 @@ void Game::render3dScene(wchar_t* screen)
 
 void Game::renderScreenByHeight(Ray& ray, wchar_t* screen, int x, wchar_t wallTile)
 {
-    int ceiling = (SCREEN_HEIGHT / 2.0) - (SCREEN_HEIGHT / ray.getDistance());
+    int ceiling = SCREEN_HEIGHT / 2.0 - SCREEN_HEIGHT / ray.getDistance();
     int floor = SCREEN_HEIGHT - ceiling;
 
     for (int y = 0; y < SCREEN_HEIGHT; y++)
@@ -139,9 +138,9 @@ void Game::render2dObjects(wchar_t* screen)
     #endif
 
     // Draw the map
-    for (std::size_t i = 0; i < MAP_HEIGHT; ++i)
+    for (int i = 0; i < MAP_HEIGHT; ++i)
     {
-        for (std::size_t j = 0; j < MAP_WIDTH; ++j)
+        for (int j = 0; j < MAP_WIDTH; ++j)
         {
             screen[(i + debugOffset) * SCREEN_WIDTH + j] = map[i][j];
         }
@@ -150,7 +149,7 @@ void Game::render2dObjects(wchar_t* screen)
     // Draw the player's rays
     for (Ray ray : player.getRays())
     {
-        for (std::pair<int, int> point : ray.getPoints())
+        for (std::pair<int, int>& point : ray.getPoints())
         {
             int rayX = point.first;
             int rayY = point.second;
