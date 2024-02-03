@@ -23,8 +23,8 @@ private:
     char tile = '>';
     double angle = 0.0f;
     double FOV = PI / 4;
-    double speed = 0.7f;
-    double rotationSpeed = speed * 0.75f;
+    double speed = 10.0f;
+    double rotationSpeed = speed * 1.5;
     std::vector<Ray> rays;
 
 public:
@@ -105,11 +105,13 @@ public:
 
     /* <------------------------ Methods ------------------------> */
 
-    void move(Direction direction);
+    void move(Direction direction, double deltaTime);
 
-    void moveBack(Direction direction);
+    void moveBack(Direction direction, double deltaTime);
 
     void updateTile();
+
+    void increaseFOV(double deltaTime);
 
     /**
      * @brief Casts rays to detect collisions with the game map.

@@ -9,6 +9,7 @@ class Ray
 private:
     double angle = 0.0f;
     double distance = 0.0f;
+    double maxDepth = 16.0f;
     std::vector<std::pair<int, int>> points;
 
 public:

@@ -2,7 +2,6 @@
 #include "constants.hpp"
 #include <thread>
 #include <chrono>
-#include <conio.h>
 #include <cmath>
 #include <iomanip>
 
@@ -17,15 +16,26 @@ void Game::run()
     draw(screen, hConsole, dwBytesWritten);
 
     bool running = true;
+    auto previousTime = std::chrono::high_resolution_clock::now();
     while (running)
     {
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        deltaTime = std::chrono::duration<double, std::milli>(currentTime - previousTime).count() / 1000;
+        previousTime = currentTime;
+
         movePlayer();
         player.castRays(map);
 
         draw(screen, hConsole, dwBytesWritten);
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(16));
+        if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
+        {
+            running = false;
+        }
     }
+
+    delete[] screen;
+    CloseHandle(hConsole);
 }
 
 void Game::movePlayer()
@@ -50,18 +60,22 @@ void Game::movePlayer()
     }
     if (GetAsyncKeyState(VK_SPACE) & 0x8000)
     {
-        player.setFOV(player.getFOV() > 2 * PI ? 0 : player.getFOV() + PI / 16);
+        player.increaseFOV(deltaTime);  // FIXME: This is droping the fps to 15^25
     }
 
-    player.move(direction);
-    if (map[(int)player.getY()][(int)player.getX()] == '#')
+    player.move(direction, deltaTime);
+    if (map[(int)player.getY()][(int)player.getX()] == '#' ||
+        (int)player.getX() < 0 || (int)player.getX() >= MAP_WIDTH ||
+        (int)player.getY() < 0 || (int)player.getY() >= MAP_HEIGHT)
     {
-        player.moveBack(direction);
+        player.moveBack(direction, deltaTime);
     }
 }
 
 void Game::draw(wchar_t* screen, HANDLE hConsole, DWORD dwBytesWritten)
 {
+    size_t linesWritten = 0;
+
     // Draw the map
     for (std::size_t i = 0; i < MAP_HEIGHT; ++i)
     {
@@ -69,6 +83,7 @@ void Game::draw(wchar_t* screen, HANDLE hConsole, DWORD dwBytesWritten)
         {
             screen[i * SCREEN_WIDTH + j] = map[i][j];
         }
+        linesWritten++;
     }
 
     // Draw the player's rays
@@ -91,12 +106,13 @@ void Game::draw(wchar_t* screen, HANDLE hConsole, DWORD dwBytesWritten)
     screen[(int)player.getY() * SCREEN_WIDTH + (int)player.getX()] = player.getTile();
 
     #ifdef DEBUG
-    wchar_t* debug = new wchar_t[SCREEN_WIDTH];
-    swprintf_s(debug, SCREEN_WIDTH, L"X=%05.2f Y=%05.2f A=%05.2fpi", player.getX(), player.getY(), player.getAngle() / PI);
+    wchar_t* debug = new wchar_t[40];
+    int fps = static_cast<int> (1 / deltaTime) % 9999;
+    swprintf_s(debug, 40, L"X=%05.2f Y=%05.2f A=%05.2fpi FPS=%05d", player.getX(), player.getY(), player.getAngle() / PI, fps);
     for (std::size_t i = 0; i < wcslen(debug); ++i)
-    {
-        screen[MAP_HEIGHT * SCREEN_WIDTH + i] = debug[i];
-    }
+        screen[linesWritten * SCREEN_WIDTH + i] = debug[i];
+    linesWritten++;
+    delete[] debug;
     #endif
 
     screen[SCREEN_WIDTH * SCREEN_HEIGHT - 1] = '\0';
