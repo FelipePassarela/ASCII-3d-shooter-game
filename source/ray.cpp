@@ -3,35 +3,56 @@
 
 void Ray::castRay(double playerX, double playerY, double playerA, std::vector<std::wstring> map)
 {
-    int newX = static_cast<int>(playerX);
-    int newY = static_cast<int>(playerY);
-    int oldX = newX;
-    int oldY = newY;
+    // Source: https://lodev.org/cgtutor/raycasting.html
+
+    // NOTE: This code is a slightly modified version of the one in the link above.
+    // The modifications were made to make the algorithm more readable. There is no
+    // performance loss or gain from these modifications.
+
+    double rayDirX = cos(angle);
+    double rayDirY = -sin(angle);
+
+    int mapX = int(playerX);
+    int mapY = int(playerY);
+
+    // Calculate the distance to the next X or Y tile
+    double deltaDistX = std::abs(1 / rayDirX);
+    double deltaDistY = std::abs(1 / rayDirY);
+
+    // Calculate the initial sideDist and step direction
+    double sideDistX = std::abs((playerX - mapX) * deltaDistX);
+    double sideDistY = std::abs((playerY - mapY) * deltaDistY);
+
+    int stepX = (rayDirX < 0) ? -1 : 1;     // -1 for left, 1 for right
+    int stepY = (rayDirY < 0) ? -1 : 1;     // -1 for up, 1 for down
 
     bool hit = false;
-    // while (!hit && distance < maxDepth)  // TODO: Use when rendering the 3D scene
-    while (!hit)
+    int sideHit;        // 0 for horizontal, 1 for vertical
+    while (!hit)        // TODO: Use (!hit && distance < maxDepth) when rendering the 3D scene
     {
-        distance += 0.1;
-
-        newX = static_cast<int>(playerX + distance * cosf(angle));      // Formula: X = X0 + t * Dx. Source: https://en.wikipedia.org/wiki/Ray_casting. 
-        newY = static_cast<int>(playerY - distance * sinf(angle));      // X0 is the initial position, t is the parameter (distance here), and Dx is 
-                                                                        // the direction vector.
-
-        if ((newX < 0 || newX >= map[0].size() || newY < 0 || newY >= map.size()) ||
-            (map[newY][newX] == '#'))
+        // Jump to the next map square, either in x-direction, or the y-direction
+        if (sideDistX < sideDistY)
         {
-            hit = true;
-        } 
-        else if (newX != oldX || newY != oldY)
+            sideDistX += deltaDistX;
+            mapX += stepX;
+            sideHit = 0;
+        }
+        else
         {
-            points.push_back(std::make_pair(newX, newY));
+            sideDistY += deltaDistY;
+            mapY += stepY;
+            sideHit = 1;
         }
 
-        oldX = newX;
-        oldY = newY;
+        if (map[mapY][mapX] == '#')
+        {
+            if (sideHit == 0)   distance = (sideDistX - deltaDistX);
+            else                distance = (sideDistY - deltaDistY);
+            hit = true;
+        }
+        else
+        {
+            points.push_back(std::make_pair(mapX, mapY));
+        }
     }
-
-    distance = sqrtf(powf(playerX - newX, 2) + powf(playerY - newY, 2));
-    distance *= cosf(angle - playerA);    // Corrects the fish-eye effect. Source: https://lodev.org/cgtutor/raycasting.html
 }
