@@ -43,6 +43,7 @@ private:
     const std::size_t MAP_HEIGHT = map.size();
     const std::size_t SCREEN_WIDTH = 120;
     const std::size_t SCREEN_HEIGHT = 40;
+    double deltaTime;
     Player player;
     
     void movePlayer();

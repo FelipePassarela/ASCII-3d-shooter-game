@@ -9,6 +9,7 @@ void Ray::castRay(double playerX, double playerY, double playerA, std::vector<st
     int oldY = newY;
 
     bool hit = false;
+    // while (!hit && distance < maxDepth)  // TODO: Use when rendering the 3D scene
     while (!hit)
     {
         distance += 0.1;
