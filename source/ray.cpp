@@ -1,7 +1,44 @@
 #include "ray.hpp"
-#include <cmath>
+#include <algorithm>
 
-void Ray::castRay(double playerX, double playerY, double playerA, std::vector<std::wstring> map)
+void Ray::castRay(double playerX, double playerY, std::vector<std::wstring> map)
+{
+    int newX = static_cast<int>(playerX);
+    int newY = static_cast<int>(playerY);
+    int oldX = newX;
+    int oldY = newY;
+
+    bool hit = false;
+    while (!hit && distance < maxDepth)
+    {
+        distance += 0.1;
+
+        newX = static_cast<int>(playerX + distance * cosf(angle));      // Formula: X = X0 + t * Dx. Source: https://en.wikipedia.org/wiki/Ray_casting. 
+        newY = static_cast<int>(playerY - distance * sinf(angle));      // X0 is the initial position, t is the parameter (distance here), and Dx is 
+                                                                        // the direction vector.
+
+        if (newX < 0 || newX >= map[0].size() || newY < 0 || newY >= map.size())
+        {
+            hit = true;
+        } 
+        else if (map[newY][newX] == '#')
+        {
+            hit = true;
+            verifyBoundary(newX, newY, playerX, playerY);
+        }
+        else if (newX != oldX || newY != oldY)
+        {
+            points.push_back(std::make_pair(newX, newY));
+        }
+
+        oldX = newX;
+        oldY = newY;
+    }
+
+    distance = sqrtf(powf(playerX - newX, 2) + powf(playerY - newY, 2));
+}
+
+void Ray::castRayDDA(double playerX, double playerY, std::vector<std::wstring> map)
 {
     // Source: https://lodev.org/cgtutor/raycasting.html
 
@@ -28,7 +65,7 @@ void Ray::castRay(double playerX, double playerY, double playerA, std::vector<st
 
     bool hit = false;
     int sideHit;        // 0 for horizontal, 1 for vertical
-    while (!hit)        // TODO: Use (!hit && distance < maxDepth) when rendering the 3D scene
+    while (!hit)
     {
         // Jump to the next map square, either in x-direction, or the y-direction
         if (sideDistX < sideDistY)
@@ -55,4 +92,33 @@ void Ray::castRay(double playerX, double playerY, double playerA, std::vector<st
             points.push_back(std::make_pair(mapX, mapY));
         }
     }
+}
+
+void Ray::verifyBoundary(int mapX, int mapY, double playerX, double playerY)
+{
+    // Source: https://github.com/OneLoneCoder/CommandLineFPS
+
+    std::vector<std::pair<double, double>> p;
+
+    for (int tx = 0; tx < 2; tx++)
+    {
+        for (int ty = 0; ty < 2; ty++)
+        {
+            // Angle of corner to eye
+            double vy = (double)mapY + ty - playerY;
+            double vx = (double)mapX + tx - playerX;
+            double d = sqrt(vx * vx + vy * vy);
+            double dot = (cosf(angle) * vx / d) + (-sinf(angle) * vy / d);
+            p.push_back(std::make_pair(d, dot));
+        }
+    }
+
+    // Sort Pairs from closest to farthest
+    sort(p.begin(), p.end(), [](const std::pair<double, double>& left, const std::pair<double, double>& right) {return left.first < right.first; });
+
+    // First two/three are closest (we will never see all four)
+    double bound = 0.01;    
+    if (acos(p.at(0).second) < bound) hitBoundary = true;
+    if (acos(p.at(1).second) < bound) hitBoundary = true;
+    if (acos(p.at(2).second) < bound) hitBoundary = true;
 }

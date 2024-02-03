@@ -11,12 +11,12 @@ void Player::move(Direction direction, double deltaTime)
     else if (direction == Direction::RIGHT)     angle -= (PI / 20) * correctedRotationSpeed;
     else if (direction == Direction::UP)
     {
-        x = x + (correctedSpeed * 1.5)  * cosf(angle);  // Multiplying by 1.5 because horizontal movement is slower than vertical on console.                                           
+        x = x + correctedSpeed * cosf(angle);  // Multiplying by 1.5 because horizontal movement is slower than vertical on console.                                           
         y = y - correctedSpeed * sinf(angle);           // Formula: X = X0 + t * Dx. Source: https://en.wikipedia.org/wiki/Ray_casting  
     }                                                   // X0 is the initial position, t is the parameter (speed in this context), and
     else if (direction == Direction::DOWN)              // Dx is the direction vector
     {
-        x = x - (correctedSpeed * 1.5) * cosf(angle);     
+        x = x - correctedSpeed * cosf(angle);     
         y = y + correctedSpeed * sinf(angle);
     }
 
@@ -50,18 +50,4 @@ void Player::increaseFOV(double deltaTime)
 {
     FOV += PI / 16 * deltaTime * rotationSpeed;
     if (FOV > 2 * PI)   FOV = 0;
-}
-
-void Player::castRays(std::vector<std::wstring> map)
-{
-    rays.clear();
-
-    double angleOffset = angle - FOV / 2;
-    while (angleOffset < angle + FOV / 2)       // FIXME: This is dropping fps to 15~25 because it's casting so many rays.
-    {                                           // It isn't not necessary to fix this now, beause when rendering the 3D scene,
-        Ray ray(angleOffset);                   // the number of rays will be reduced (one for each column of the screen).
-        ray.castRay(x, y, angle, map);
-        rays.push_back(ray);
-        angleOffset += PI / 180;
-    }
 }

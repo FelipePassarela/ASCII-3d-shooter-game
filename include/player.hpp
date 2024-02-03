@@ -23,8 +23,8 @@ private:
     char tile = '>';
     double angle = 0.0f;
     double FOV = PI / 4;
-    double speed = 15.0f;
-    double rotationSpeed = speed;
+    double speed = 5.0f;
+    double rotationSpeed = speed * 2.0f;
     std::vector<Ray> rays;
 
 public:
@@ -113,16 +113,15 @@ public:
 
     void increaseFOV(double deltaTime);
 
-    /**
-     * @brief Casts rays to detect collisions with the game map.
-     * 
-     * This function takes a vector of strings representing the game map and casts rays
-     * to detect collisions with walls or other objects in the map. It is used to determine
-     * the visibility of the player in the game world.
-     * 
-     * @param[out] map The game map represented as a vector of wstrings.
-     */
-    void castRays(std::vector<std::wstring> map);
+    void addRay(Ray ray)
+    {
+        rays.push_back(ray);
+    }
+
+    void clearRays()
+    {
+        rays.clear();
+    }
 };
 
 #endif

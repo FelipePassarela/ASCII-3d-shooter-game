@@ -11,44 +11,39 @@ class Game
 {
 private:
     std::vector<std::wstring> map = {
-        {L"####################################################################################"},
-        {L"#                                                                    ###           #"},
-        {L"#                                                                    ###           #"},
-        {L"#                                                                    ###           #"},
-        {L"#                                                                    ###           #"},
-        {L"#                                                                    ###           #"},
-        {L"#                                                                    ###           #"},
-        {L"#                                   ####                                           #"},
-        {L"#                                      #                             ###           #"},
-        {L"#                                   ####                             ###           #"},
-        {L"#                                                                    ###           #"},
-        {L"#                                                                    ###           #"},
-        {L"#                                                                    ###           #"},
-        {L"#                                                                                  #"},
-        {L"#                                                                                  #"},
-        {L"#                                                                                  #"},
-        {L"#                                                                                  #"},
-        {L"###  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ###"},
-        {L"#            ##          ##                          ##                            #"},
-        {L"#            ##          ##                          ##                            #"},
-        {L"#            ##          ##                          ##                            #"},
-        {L"#            ##          ##                          ##                            #"},
-        {L"#            ##          ##                          ##                            #"},
-        {L"#            ##          ##                          ##                            #"},
-        {L"#            ##          ##                          ##                            #"},
-        {L"#            ##          ##                          ##                            #"},
-        {L"####################################################################################"}
+        {L"##############################"},
+        {L"#                    ###     #"},
+        {L"#                    ###     #"},
+        {L"#                    ###     #"},
+        {L"#       ##########           #"},
+        {L"#                #   ###     #"},
+        {L"#       ##########   ###     #"},
+        {L"#                    ###     #"},
+        {L"#                    ###     #"},
+        {L"#                            #"},
+        {L"###  ##   ###  ##    ###     #"},
+        {L"#    ##   ##                 #"},
+        {L"#    ##   ##                 #"},
+        {L"#    ##   ##                 #"},
+        {L"#    ##   ##                 #"},
+        {L"##############################"}
     };    
-    const std::size_t MAP_WIDTH = map[0].size();
-    const std::size_t MAP_HEIGHT = map.size();
-    const std::size_t SCREEN_WIDTH = 120;
-    const std::size_t SCREEN_HEIGHT = 40;
+    const int MAP_WIDTH = map[0].size();
+    const int MAP_HEIGHT = map.size();
+    const int SCREEN_WIDTH = 120;
+    const int SCREEN_HEIGHT = 40;
     double deltaTime;
     Player player;
     
     void movePlayer();
 
-    void draw(wchar_t* screen, HANDLE hConsole, DWORD dwBytesWritten);
+    void render2dObjects(wchar_t* screen);
+
+    wchar_t createWallTileByDistance(Ray& ray);
+
+    void render3dScene(wchar_t* screen);
+
+    void renderScreenByHeight(Ray& ray, wchar_t* screen, int x, wchar_t wallTile);
 
 public:
     Game() {}
