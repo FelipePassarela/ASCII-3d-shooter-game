@@ -129,8 +129,9 @@ void Game::render2dObjects(wchar_t* screen)
     size_t debugOffset = 0;
 
     #ifdef DEBUG
-    wchar_t* debug = new wchar_t[40];
-    swprintf_s(debug, 40, L"X=%05.2f Y=%05.2f A=%05.2fpi FPS=%3.2f", player.getX(), player.getY(), player.getAngle() / PI, 1.0f / deltaTime);
+    wchar_t* debug = new wchar_t[60];
+    swprintf_s(debug, 60, L"X=%3.2f Y=%3.2f A=%3.2fpi FOV=%3.2fpi FPS=%3.2f", 
+        player.getX(), player.getY(), player.getAngle() / PI, player.getFOV() / PI, 1.0f / deltaTime);
     for (std::size_t i = 0; i < wcslen(debug); ++i)
         screen[i] = debug[i];
     delete[] debug;
