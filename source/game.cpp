@@ -13,8 +13,6 @@ void Game::run()
     SetConsoleActiveScreenBuffer(hConsole);
     DWORD dwBytesWritten = 0;
 
-    draw(screen, hConsole, dwBytesWritten);
-
     bool running = true;
     auto previousTime = std::chrono::high_resolution_clock::now();
     while (running)
@@ -26,49 +24,69 @@ void Game::run()
         if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)    running = false;
 
         movePlayer();
-        
-        // Render the 3D scene
-        player.clearRays();
-        for (std::size_t x = 0; x < SCREEN_WIDTH; x++)
-        {
-            double rayAngle = (player.getAngle() + player.getFOV() / 2.0) - (x / float(SCREEN_WIDTH)) * player.getFOV();
-            Ray ray(rayAngle);
 
-            ray.castRay(player.getX(), player.getY(), map);
-            player.addRay(ray);
+        render3dScene(screen);
 
-            short wallTile = ' ';
-            if (ray.getDistance() <= ray.getMaxDepth() / 4.0)           wallTile = 0x2588;  // Full block (closest)
-            else if (ray.getDistance() < ray.getMaxDepth() / 3.0)       wallTile = 0x2593;
-            else if (ray.getDistance() < ray.getMaxDepth() / 2.0)       wallTile = 0x2592;
-            else if (ray.getDistance() < ray.getMaxDepth())             wallTile = 0x2591;
-            else                                                        wallTile = ' ';     // Space (farthest)
+        render2dObjects(screen);
 
-            if (ray.getHitBoundary())                                   wallTile = ' ';
-
-            int ceiling = (SCREEN_HEIGHT / 2.0) - (SCREEN_HEIGHT / ray.getDistance());
-            int floor = SCREEN_HEIGHT - ceiling;
-
-            for (int y = 0; y < SCREEN_HEIGHT; y++)
-            {
-                if (y <= ceiling)                       screen[y * SCREEN_WIDTH + x] = ' ';
-                else if (y > ceiling && y <= floor)     screen[y * SCREEN_WIDTH + x] = wallTile;
-                else if (y > floor)
-                {
-                    double floorDistance = 1.0 - (y - SCREEN_HEIGHT / 2.0) / (SCREEN_HEIGHT / 2.0);
-                    if (floorDistance < 0.25)           screen[y * SCREEN_WIDTH + x] = '#';
-                    else if (floorDistance < 0.5)       screen[y * SCREEN_WIDTH + x] = 'x';
-                    else if (floorDistance < 0.75)      screen[y * SCREEN_WIDTH + x] = '.';
-                    else                                screen[y * SCREEN_WIDTH + x] = ' ';
-                }
-            }
-        }
-
-        draw(screen, hConsole, dwBytesWritten);
+        screen[SCREEN_WIDTH * SCREEN_HEIGHT - 1] = '\0';
+        WriteConsoleOutputCharacterW(hConsole, screen, SCREEN_WIDTH * SCREEN_HEIGHT, { 0, 0 }, &dwBytesWritten);
     }
 
     delete[] screen;
     CloseHandle(hConsole);
+}
+
+void Game::render3dScene(wchar_t* screen)
+{
+    player.clearRays();
+
+    for (int x = 0; x < SCREEN_WIDTH; x++)
+    {
+        double rayAngle = (player.getAngle() + player.getFOV() / 2.0) - (x / float(SCREEN_WIDTH)) * player.getFOV();
+        Ray ray(rayAngle);
+
+        ray.castRay(player.getX(), player.getY(), map);
+        player.addRay(ray);
+
+        wchar_t wallTile = createWallTileByDistance(ray);
+
+        renderScreenByHeight(ray, screen, x, wallTile);
+    }
+}
+
+void Game::renderScreenByHeight(Ray& ray, wchar_t* screen, int x, wchar_t wallTile)
+{
+    int ceiling = (SCREEN_HEIGHT / 2.0) - (SCREEN_HEIGHT / ray.getDistance());
+    int floor = SCREEN_HEIGHT - ceiling;
+
+    for (int y = 0; y < SCREEN_HEIGHT; y++)
+    {
+        if (y <= ceiling)                       screen[y * SCREEN_WIDTH + x] = ' ';
+        else if (y > ceiling && y <= floor)     screen[y * SCREEN_WIDTH + x] = wallTile;
+        else if (y > floor)
+        {
+            double floorDistance = 1.0 - (y - SCREEN_HEIGHT / 2.0) / (SCREEN_HEIGHT / 2.0);
+            if (floorDistance < 0.25)           screen[y * SCREEN_WIDTH + x] = '#';
+            else if (floorDistance < 0.5)       screen[y * SCREEN_WIDTH + x] = 'x';
+            else if (floorDistance < 0.75)      screen[y * SCREEN_WIDTH + x] = '.';
+            else                                screen[y * SCREEN_WIDTH + x] = ' ';
+        }
+    }
+}
+
+wchar_t Game::createWallTileByDistance(Ray& ray)
+{
+    wchar_t wallTile = ' ';
+    if (ray.getDistance() <= ray.getMaxDepth() / 4.0)           wallTile = 0x2588;  // Closest
+    else if (ray.getDistance() < ray.getMaxDepth() / 3.0)       wallTile = 0x2593;
+    else if (ray.getDistance() < ray.getMaxDepth() / 2.0)       wallTile = 0x2592;
+    else if (ray.getDistance() < ray.getMaxDepth())             wallTile = 0x2591;
+    else                                                        wallTile = ' ';     // Farthest
+
+    if (ray.getHitBoundary())                                   wallTile = ' ';
+
+    return wallTile;
 }
 
 void Game::movePlayer()
@@ -107,7 +125,7 @@ void Game::movePlayer()
     }
 }
 
-void Game::draw(wchar_t* screen, HANDLE hConsole, DWORD dwBytesWritten)
+void Game::render2dObjects(wchar_t* screen)
 {
     size_t debugOffset = 0;
 
@@ -142,7 +160,4 @@ void Game::draw(wchar_t* screen, HANDLE hConsole, DWORD dwBytesWritten)
 
     // Draw the player
     screen[(int(player.getY()) + debugOffset) * SCREEN_WIDTH + int(player.getX())] = player.getTile();
-
-    screen[SCREEN_WIDTH * SCREEN_HEIGHT - 1] = '\0';
-    WriteConsoleOutputCharacterW(hConsole, screen, SCREEN_WIDTH * SCREEN_HEIGHT, { 0, 0 }, &dwBytesWritten);
 }

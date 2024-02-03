@@ -37,7 +37,13 @@ private:
     
     void movePlayer();
 
-    void draw(wchar_t* screen, HANDLE hConsole, DWORD dwBytesWritten);
+    void render2dObjects(wchar_t* screen);
+
+    wchar_t createWallTileByDistance(Ray& ray);
+
+    void render3dScene(wchar_t* screen);
+
+    void renderScreenByHeight(Ray& ray, wchar_t* screen, int x, wchar_t wallTile);
 
 public:
     Game() {}
