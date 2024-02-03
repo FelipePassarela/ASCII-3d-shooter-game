@@ -114,6 +114,10 @@ void Game::movePlayer()
     {
         player.increaseFOV(deltaTime); 
     }
+    if (GetAsyncKeyState('Q') & 0x8000)
+    {
+        player.setFOV(PI / 3.5);
+    }
 
     player.move(direction, deltaTime);
     if (map[int(player.getY())][int(player.getX())] == '#' ||
