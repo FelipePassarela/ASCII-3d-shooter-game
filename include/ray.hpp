@@ -10,6 +10,7 @@ private:
     double angle = 0.0f;
     double distance = 0.0f;
     double maxDepth = 16.0f;
+    bool hitBoundary = false;
     std::vector<std::pair<int, int>> points;
 
 public:
@@ -25,6 +26,10 @@ public:
 
     double getDistance() const { return distance; }
 
+    double getMaxDepth() const { return maxDepth; }
+
+    bool getHitBoundary() const { return hitBoundary; }
+
     std::vector<std::pair<int, int>> getPoints() const { return points; }
 
     /* <------------------------ Setters ------------------------> */
@@ -32,6 +37,10 @@ public:
     void setAngle(double newAngle) { angle = newAngle; }
 
     void setDistance(double newDistance) { distance = newDistance; }
+
+    void setMaxDepth(double newMaxDepth) { maxDepth = newMaxDepth; }
+
+    void setHitBoundary(bool newHitBoundary) { hitBoundary = newHitBoundary; }
 
     void setPoints(std::vector<std::pair<int, int>> newPoints) { points = newPoints; }
 
@@ -42,10 +51,9 @@ public:
      * 
      * @param[out] playerX The x-coordinate of the player's position.
      * @param[out] playerY The y-coordinate of the player's position.
-     * @param[out] playerA The angle of the player's view.
      * @param[out] map The map containing the game environment.
      */
-    void castRay(double playerX, double playerY, double playerA, std::vector<std::wstring> map);
+    void castRay(double playerX, double playerY, std::vector<std::wstring> map);
 
 };
 
