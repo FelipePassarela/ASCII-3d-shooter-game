@@ -3,7 +3,6 @@
 #include <thread>
 #include <chrono>
 #include <cmath>
-#include <iomanip>
 
 void Game::run()
 {
