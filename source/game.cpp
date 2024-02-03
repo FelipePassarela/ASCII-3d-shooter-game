@@ -107,8 +107,7 @@ void Game::draw(wchar_t* screen, HANDLE hConsole, DWORD dwBytesWritten)
 
     #ifdef DEBUG
     wchar_t* debug = new wchar_t[40];
-    int fps = static_cast<int> (1 / deltaTime) % 9999;
-    swprintf_s(debug, 40, L"X=%05.2f Y=%05.2f A=%05.2fpi FPS=%05d", player.getX(), player.getY(), player.getAngle() / PI, fps);
+    swprintf_s(debug, 40, L"X=%05.2f Y=%05.2f A=%05.2fpi FPS=%3.2f", player.getX(), player.getY(), player.getAngle() / PI, 1.0f / deltaTime);
     for (std::size_t i = 0; i < wcslen(debug); ++i)
         screen[linesWritten * SCREEN_WIDTH + i] = debug[i];
     linesWritten++;
