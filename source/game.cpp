@@ -77,7 +77,7 @@ void Game::renderScreenByHeight(Ray& ray, wchar_t* screen, int x, wchar_t wallTi
 wchar_t Game::createWallTileByDistance(Ray& ray)
 {
     wchar_t wallTile = ' ';
-    if (ray.getDistance() <= ray.getMaxDepth() / 4.0)           wallTile = 0x2588;  // Closest
+    if (ray.getDistance() <= ray.getMaxDepth() / 3.5)           wallTile = 0x2588;  // Closest
     else if (ray.getDistance() < ray.getMaxDepth() / 3.0)       wallTile = 0x2593;
     else if (ray.getDistance() < ray.getMaxDepth() / 2.0)       wallTile = 0x2592;
     else if (ray.getDistance() < ray.getMaxDepth())             wallTile = 0x2591;

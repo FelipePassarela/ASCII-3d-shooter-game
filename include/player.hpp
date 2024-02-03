@@ -22,7 +22,7 @@ private:
     double y = 1;
     char tile = '>';
     double angle = 0.0f;
-    double FOV = PI / 4;
+    double FOV = PI / 3.5;
     double speed = 5.0f;
     double rotationSpeed = speed * 0.75f;
     std::vector<Ray> rays;
