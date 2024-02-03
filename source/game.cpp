@@ -60,7 +60,7 @@ void Game::movePlayer()
     }
     if (GetAsyncKeyState(VK_SPACE) & 0x8000)
     {
-        player.increaseFOV(deltaTime);  // FIXME: This is droping the fps to 15~25
+        player.increaseFOV(deltaTime); 
     }
 
     player.move(direction, deltaTime);

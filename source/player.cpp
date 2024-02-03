@@ -57,9 +57,9 @@ void Player::castRays(std::vector<std::wstring> map)
     rays.clear();
 
     double angleOffset = angle - FOV / 2;
-    while (angleOffset < angle + FOV / 2)
-    {
-        Ray ray(angleOffset);
+    while (angleOffset < angle + FOV / 2)       // FIXME: This is dropping fps to 15~25 because it's casting so many rays.
+    {                                           // It isn't not necessary to fix this now, beause when rendering the 3D scene,
+        Ray ray(angleOffset);                   // the number of rays will be reduced (one for each column of the screen).
         ray.castRay(x, y, angle, map);
         rays.push_back(ray);
         angleOffset += PI / 180;
