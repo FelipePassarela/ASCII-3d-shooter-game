@@ -44,6 +44,8 @@ void Game::run()
             else if (ray.getDistance() < ray.getMaxDepth())             wallTile = 0x2591;
             else                                                        wallTile = ' ';     // Space (farthest)
 
+            if (ray.getHitBoundary())                                   wallTile = ' ';
+
             int ceiling = (SCREEN_HEIGHT / 2.0) - (SCREEN_HEIGHT / ray.getDistance());
             int floor = SCREEN_HEIGHT - ceiling;
 

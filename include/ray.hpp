@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <cmath>
 
 class Ray
 {
@@ -55,6 +56,11 @@ public:
      */
     void castRay(double playerX, double playerY, std::vector<std::wstring> map);
 
+    void castRayDDA(double playerX, double playerY, std::vector<std::wstring> map);
+
+    void verifyBoundary(int mapX, int mapY, double playerX, double playerY);
+
+    void fixFishEyeEffect(double playerA) { distance *= cosf(angle - playerA); }
 };
 
 #endif
