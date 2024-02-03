@@ -46,6 +46,10 @@ void Ray::castRayDDA(double playerX, double playerY, std::vector<std::wstring> m
     // The modifications were made to make the algorithm more readable. There is no
     // performance loss or gain from these modifications.
 
+    // NOTE: Besides the perfomance gains, the DDA algorithm isn't appropriate for this
+    // game because of the distortions in the walls that it causes while player is 
+    // moving. The original castRay method is the best choice for this game.
+
     double rayDirX = cos(angle);
     double rayDirY = -sin(angle);
 
