@@ -9,6 +9,7 @@ void Ray::castRay(double playerX, double playerY, std::vector<std::wstring> map)
     int oldY = newY;
 
     bool hit = false;
+
     while (!hit && distance < maxDepth)
     {
         distance += 0.1;
@@ -34,8 +35,6 @@ void Ray::castRay(double playerX, double playerY, std::vector<std::wstring> map)
         oldX = newX;
         oldY = newY;
     }
-
-    distance = sqrtf(powf(playerX - newX, 2) + powf(playerY - newY, 2));
 }
 
 void Ray::verifyBoundary(int mapX, int mapY, double playerX, double playerY)
