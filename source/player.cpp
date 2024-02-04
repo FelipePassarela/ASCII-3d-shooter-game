@@ -71,6 +71,4 @@ void Player::fixFloatingPointImprecision()
     
     x = std::round(x * multiplier) / multiplier;
     y = std::round(y * multiplier) / multiplier;
-    angle = std::round(angle * multiplier) / multiplier;
-    FOV = std::round(FOV * multiplier) / multiplier;
 }

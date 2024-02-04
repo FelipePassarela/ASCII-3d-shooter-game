@@ -48,9 +48,15 @@ private:
     const int MAP_HEIGHT = map.size();      
     const int SCREEN_WIDTH = 120;           
     const int SCREEN_HEIGHT = 40;           
-    double deltaTime;   ///< The time between frames.
-    Player player;      ///< The player object in the game.
+    double deltaTime;           ///< The time between frames.
+    Player player;              ///< The player object in the game.
+    bool showMap = true;        ///< Whether to show the map on the screen.
+    bool running = true;    
     
+    /* <------------------------ Methods ------------------------> */
+
+    void readInput();
+
     /**
      * @brief Moves the player in the game.
      * 

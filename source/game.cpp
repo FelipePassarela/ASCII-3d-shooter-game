@@ -21,7 +21,6 @@ void Game::run()
     SetConsoleActiveScreenBuffer(hConsole);
     DWORD dwBytesWritten = 0;
 
-    bool running = true;
     auto previousTime = std::chrono::high_resolution_clock::now();
     while (running)
     {
@@ -29,12 +28,9 @@ void Game::run()
         deltaTime = std::chrono::duration<double, std::milli>(currentTime - previousTime).count() / 1000;
         previousTime = currentTime;
 
-        if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)    running = false;
-
-        movePlayer();
+        readInput();
 
         render3dScene(screen);
-
         render2dObjects(screen);
 
         screen[SCREEN_WIDTH * SCREEN_HEIGHT - 1] = '\0';
@@ -99,34 +95,38 @@ wchar_t Game::createWallTileByDistance(Ray& ray)
     return wallTile;
 }
 
+void Game::readInput()
+{
+    movePlayer();
+
+    // This is necessary to toggle buttons
+    static bool wasMPressed = false;
+    bool isMPressed = GetAsyncKeyState('M') & 0x8000;
+    static bool wasEPressed = false;
+    bool isEPressed = GetAsyncKeyState('E') & 0x8000;
+
+    if (!wasEPressed && isEPressed)
+    {
+        // Toggle the player's FOV (initial or 2*PI)
+        if (player.getFOV() == player.getInitialFOV())  player.setFOV(2 * PI);
+        else                                            player.setFOV(player.getInitialFOV());
+    }
+    if (!wasMPressed && isMPressed)             showMap = !showMap;
+    if (GetAsyncKeyState(VK_SPACE) & 0x8000)    player.increaseFOV(deltaTime);
+    if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)   running = false;
+
+    wasMPressed = isMPressed;
+    wasEPressed = isEPressed;
+}
+
 void Game::movePlayer()
 {
     Direction direction = Direction::NONE;
 
-    if (GetAsyncKeyState('W') & 0x8000)
-    {
-        direction = Direction::UP;
-    }
-    if (GetAsyncKeyState('A') & 0x8000)
-    {
-        direction = Direction::LEFT;
-    }
-    if (GetAsyncKeyState('S') & 0x8000)
-    {
-        direction = Direction::DOWN;
-    }
-    if (GetAsyncKeyState('D') & 0x8000)
-    {
-        direction = Direction::RIGHT;
-    }
-    if (GetAsyncKeyState(VK_SPACE) & 0x8000)
-    {
-        player.increaseFOV(deltaTime); 
-    }
-    if (GetAsyncKeyState('Q') & 0x8000)
-    {
-        player.setFOV(PI / 3.5);
-    }
+    if (GetAsyncKeyState('W') & 0x8000)     direction = Direction::UP;
+    if (GetAsyncKeyState('A') & 0x8000)     direction = Direction::LEFT;
+    if (GetAsyncKeyState('S') & 0x8000)     direction = Direction::DOWN;
+    if (GetAsyncKeyState('D') & 0x8000)     direction = Direction::RIGHT;
 
     player.move(direction, deltaTime);
 
@@ -152,26 +152,29 @@ void Game::render2dObjects(wchar_t* screen)
     debugOffset++;
     #endif
 
-    // Draw the map
-    for (int i = 0; i < MAP_HEIGHT; ++i)
+    if (showMap)
     {
-        for (int j = 0; j < MAP_WIDTH; ++j)
+        // Draw the map
+        for (int i = 0; i < MAP_HEIGHT; ++i)
         {
-            screen[(i + debugOffset) * SCREEN_WIDTH + j] = map[i][j];
+            for (int j = 0; j < MAP_WIDTH; ++j)
+            {
+                screen[(i + debugOffset) * SCREEN_WIDTH + j] = map[i][j];
+            }
         }
-    }
 
-    // Draw the player's rays
-    for (Ray ray : player.getRays())
-    {
-        for (std::pair<int, int>& point : ray.getPoints())
+        // Draw the player's rays on map
+        for (Ray ray : player.getRays())
         {
-            int rayX = point.first;
-            int rayY = point.second;
-            screen[(rayY + debugOffset) * SCREEN_WIDTH + rayX] = '-';
+            for (std::pair<int, int>& point : ray.getPoints())
+            {
+                int rayX = point.first;
+                int rayY = point.second;
+                screen[(rayY + debugOffset) * SCREEN_WIDTH + rayX] = '-';
+            }
         }
-    }
 
-    // Draw the player
-    screen[(int(player.getY()) + debugOffset) * SCREEN_WIDTH + int(player.getX())] = player.getTile();
+        // Draw the player on map
+        screen[(int(player.getY()) + debugOffset) * SCREEN_WIDTH + int(player.getX())] = player.getTile();
+    }
 }
