@@ -87,12 +87,12 @@ wchar_t Game::createWallTileByDistance(Ray& ray)
 {
     wchar_t wallTile = ' ';
     
-    if (ray.getDistance() < 0.5)                                wallTile = 0x2593;  // Closest
+    if (ray.getDistance() < 0.75)                               wallTile = 0x2593;  // Closest
     else if (ray.getDistance() < ray.getMaxDepth() / 3.5)       wallTile = 0x2588;
     else if (ray.getDistance() < ray.getMaxDepth() / 3.0)       wallTile = 0x2593;
     else if (ray.getDistance() < ray.getMaxDepth() / 2.0)       wallTile = 0x2592;
-    else if (ray.getDistance() < ray.getMaxDepth())             wallTile = 0x2591;
-    else                                                        wallTile = ' ';     // Farthest
+    else if (ray.getDistance() < ray.getMaxDepth())             wallTile = 0x2591;  // Farthest
+    else                                                        wallTile = ' ';
 
     if (ray.getHitBoundary())                                   wallTile = ' ';
 
