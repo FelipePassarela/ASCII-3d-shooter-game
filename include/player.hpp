@@ -49,7 +49,7 @@ private:
     std::vector<Ray> rays;
 
     /**
-     * @brief Fix player's floating point imprecision
+     * @brief Fix player's position floating point imprecision
      * 
      * This function is necessary to solve a bug when the player starts in (1, 1). The 
      * floating point imprecision allows the player to move through walls in certains 
