@@ -1,3 +1,13 @@
+/**
+ * @file player.hpp
+ * @author Felipe Passarela (felipepassarela11@gmail.com)
+ * @brief Player class header file.
+ * @version 1.0
+ * @date 2024-02-04
+ * 
+ * @copyright Copyright (c) 2024
+ * 
+ */
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
@@ -5,6 +15,9 @@
 #include "ray.hpp"
 #include "constants.hpp"
 
+/**
+ * @brief Enumerates the possible directions for the player.
+ */
 enum class Direction
 {
     NONE,
@@ -14,6 +27,13 @@ enum class Direction
     RIGHT,
 };
 
+/**
+ * @class Player
+ * @brief Represents the player in the game.
+ * 
+ * The Player class encapsulates the functionality of the player in the game. It is responsible for 
+ * handling the player's movement, health, and field of view (FOV).
+ */
 class Player
 {
 private:
@@ -115,19 +135,47 @@ public:
 
     /* <------------------------ Methods ------------------------> */
 
+    /**
+     * Moves the player in the specified direction.
+     * 
+     * @param direction The direction in which the player should move.
+     * @param deltaTime The time elapsed since the last movement.
+     */
     void move(Direction direction, double deltaTime);
 
+    /**
+     * Moves the player backwards in the specified direction.
+     * 
+     * @param direction The direction in which the player should move.
+     * @param deltaTime The time elapsed since the last frame.
+     */
     void moveBack(Direction direction, double deltaTime);
 
+    /**
+     * @brief Updates the player's tile based on its angle.
+     */
     void updateTile();
 
+    /**
+     * @brief Increases the field of view (FOV) of the player.
+     * 
+     * @param deltaTime The time elapsed since the last frame.
+     */
     void increaseFOV(double deltaTime);
 
+    /**
+     * @brief Adds a ray to the player's list of rays.
+     * 
+     * @param ray The ray to be added.
+     */
     void addRay(Ray ray)
     {
         rays.push_back(ray);
     }
 
+    /**
+     * @brief Clears the player's list of rays.
+     */
     void clearRays()
     {
         rays.clear();

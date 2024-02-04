@@ -1,3 +1,13 @@
+/**
+ * @file game.cpp
+ * @author Felipe Passarela (felipepassarela11@gmail.com)
+ * @brief Game class implementation file.
+ * @version 1.0
+ * @date 2024-02-04
+ * 
+ * @copyright Copyright (c) 2024
+ * 
+ */
 #include "game.hpp"
 #include "constants.hpp"
 #include <thread>

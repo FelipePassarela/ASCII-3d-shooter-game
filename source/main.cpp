@@ -1,5 +1,13 @@
-// TODO: Document all the code
-
+/**
+ * @file main.cpp
+ * @author Felipe Passarela (felipepassarela11@gmail.com)
+ * @brief The main file of the game.
+ * @version 1.0
+ * @date 2024-02-04
+ * 
+ * @copyright Copyright (c) 2024
+ * 
+ */
 #include <iostream>
 #include "game.hpp"
 
