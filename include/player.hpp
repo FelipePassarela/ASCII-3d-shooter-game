@@ -27,6 +27,16 @@ private:
     double rotationSpeed = speed * 0.75f;
     std::vector<Ray> rays;
 
+    /**
+     * @brief Fix player's floating point imprecision
+     * 
+     * This function is necessary to solve a bug when the player starts in (1, 1). The 
+     * floating point imprecision allows the player to move through walls in certains 
+     * angles. This function fixes that by rounding the player's position to the 
+     * nearest 6th decimal place.
+     */
+    void fixFloatingPointImprecision();
+
 public:
     Player() {}
 

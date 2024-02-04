@@ -11,10 +11,10 @@ void Player::move(Direction direction, double deltaTime)
     else if (direction == Direction::RIGHT)     angle -= correctedRotationSpeed;
     else if (direction == Direction::UP)
     {
-        x = x + correctedSpeed * cosf(angle);  // Multiplying by 1.5 because horizontal movement is slower than vertical on console.                                           
-        y = y - correctedSpeed * sinf(angle);           // Formula: X = X0 + t * Dx. Source: https://en.wikipedia.org/wiki/Ray_casting  
-    }                                                   // X0 is the initial position, t is the parameter (speed in this context), and
-    else if (direction == Direction::DOWN)              // Dx is the direction vector
+        x = x + correctedSpeed * cosf(angle);           // Formula: X = X0 + t * Dx. Source: https://en.wikipedia.org/wiki/Ray_casting                                           
+        y = y - correctedSpeed * sinf(angle);           // X0 is the initial position, t is the parameter (speed in this context), and  
+    }                                                   // Dx is the direction vector
+    else if (direction == Direction::DOWN)
     {
         x = x - correctedSpeed * cosf(angle);     
         y = y + correctedSpeed * sinf(angle);
@@ -24,13 +24,15 @@ void Player::move(Direction direction, double deltaTime)
     else if (angle < 0)         angle += 2 * PI;
 
     updateTile();
+
+    if (direction != Direction::NONE)   fixFloatingPointImprecision();  // Necessary when player starts in (1, 1)
 }
 
 void Player::moveBack(Direction direction, double deltaTime)
 {
     if (direction == Direction::UP)
     {
-       this->move(Direction::DOWN, deltaTime);
+        this->move(Direction::DOWN, deltaTime);
     }
     else if (direction == Direction::DOWN)
     {
@@ -50,4 +52,15 @@ void Player::increaseFOV(double deltaTime)
 {
     FOV += deltaTime * rotationSpeed;
     if (FOV > 2 * PI)   FOV = 0;
+}
+
+void Player::fixFloatingPointImprecision()
+{
+    const int decimalPlaces = 6;
+    const double multiplier = std::pow(10.0, decimalPlaces);
+    
+    x = std::round(x * multiplier) / multiplier;
+    y = std::round(y * multiplier) / multiplier;
+    angle = std::round(angle * multiplier) / multiplier;
+    FOV = std::round(FOV * multiplier) / multiplier;
 }

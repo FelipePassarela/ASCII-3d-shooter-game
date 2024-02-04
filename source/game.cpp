@@ -76,6 +76,7 @@ void Game::renderScreenByHeight(Ray& ray, wchar_t* screen, int x, wchar_t wallTi
 wchar_t Game::createWallTileByDistance(Ray& ray)
 {
     wchar_t wallTile = ' ';
+    
     if (ray.getDistance() < 0.5)                                wallTile = 0x2593;  // Closest
     else if (ray.getDistance() < ray.getMaxDepth() / 3.5)       wallTile = 0x2588;
     else if (ray.getDistance() < ray.getMaxDepth() / 3.0)       wallTile = 0x2593;
@@ -90,8 +91,6 @@ wchar_t Game::createWallTileByDistance(Ray& ray)
 
 void Game::movePlayer()
 {
-    // FIXME: The player can move through walls when the game starts
-
     Direction direction = Direction::NONE;
 
     if (GetAsyncKeyState('W') & 0x8000)
@@ -120,9 +119,10 @@ void Game::movePlayer()
     }
 
     player.move(direction, deltaTime);
-    if (map[int(player.getY())][int(player.getX())] == '#' ||
-        int(player.getX()) < 0 || int(player.getX()) >= MAP_WIDTH ||
-        int(player.getY()) < 0 || int(player.getY()) >= MAP_HEIGHT)
+
+    if (int(player.getX()) <= 0 || int(player.getX()) >= MAP_WIDTH ||
+        int(player.getY()) <= 0 || int(player.getY()) >= MAP_HEIGHT ||
+        map[int(player.getY())][int(player.getX())] == '#')
     {
         player.moveBack(direction, deltaTime);
     }
@@ -133,8 +133,8 @@ void Game::render2dObjects(wchar_t* screen)
     size_t debugOffset = 0;
 
     #ifdef DEBUG
-    wchar_t* debug = new wchar_t[60];
-    swprintf_s(debug, 60, L"X=%3.2f Y=%3.2f A=%3.2fpi FOV=%3.2fpi FPS=%3.2f", 
+    wchar_t* debug = new wchar_t[SCREEN_WIDTH];
+    swprintf_s(debug, SCREEN_WIDTH, L"X=%3.2lf Y=%3.2lf A=%3.2lfpi FOV=%3.2lfpi FPS=%3.2lf", 
         player.getX(), player.getY(), player.getAngle() / PI, player.getFOV() / PI, 1.0f / deltaTime);
     for (std::size_t i = 0; i < wcslen(debug); ++i)
         screen[i] = debug[i];
