@@ -117,6 +117,7 @@ void Ray::castRayDDA(double playerX, double playerY, std::vector<std::wstring> m
         {
             if (sideHit == 0)   distance = (sideDistX - deltaDistX);
             else                distance = (sideDistY - deltaDistY);
+            if (distance == 0)  distance = 0.1;
             hit = true;
         }
         else
