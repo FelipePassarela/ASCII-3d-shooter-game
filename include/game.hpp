@@ -53,4 +53,4 @@ public:
     void run();
 };
 
-#endif
+#endif  // GAME_HPP

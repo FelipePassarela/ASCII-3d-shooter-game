@@ -63,4 +63,4 @@ public:
     void fixFishEyeEffect(double playerA) { distance *= cosf(angle - playerA); }
 };
 
-#endif
+#endif  // RAY_HPP

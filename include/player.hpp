@@ -124,4 +124,4 @@ public:
     }
 };
 
-#endif
+#endif  // PLAYER_HPP
