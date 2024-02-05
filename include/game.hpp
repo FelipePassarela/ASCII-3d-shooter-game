@@ -55,6 +55,11 @@ private:
     
     /* <------------------------ Methods ------------------------> */
 
+    /**
+     * @brief Reads the user input.
+     * 
+     * This function is responsible for reading the user input and updating the game state.
+     */
     void readInput();
 
     /**
