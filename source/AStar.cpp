@@ -1,4 +1,6 @@
 #include "AStar.hpp"
+#include <algorithm>
+#include <cmath>
 
 using namespace AStar;
 using namespace AStar::Utils;
@@ -44,8 +46,8 @@ double AStar::Utils::heuristic(int startX, int startY, int endX, int endY)
 
 Node& AStar::Utils::chooseCurrentNode(AStar::NodeList& openList)
 {
-    Node currentNode = openList.front();
-    for (const auto& node : openList)
+    Node& currentNode = openList.front();
+    for (auto& node : openList)
     {
         if (node.fCost < currentNode.fCost || (node.fCost == currentNode.fCost && node.hCost < currentNode.hCost))
         {
@@ -57,9 +59,9 @@ Node& AStar::Utils::chooseCurrentNode(AStar::NodeList& openList)
 
 bool AStar::Utils::isNodeInList(const Node& node, const NodeList& list)
 {
-    for (auto& node : list)
+    for (auto& n : list)
     {
-        if (node.x == node.x && node.y == node.y)
+        if (n.x == node.x && n.y == node.y)
         {
             return true;
         }

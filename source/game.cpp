@@ -174,6 +174,14 @@ void Game::render2dObjects(wchar_t* screen)
             }
         }
 
+        std::vector<std::pair<int, int>> path = AStar::findPath(int(player.getX()), int(player.getY()), 10, 1, map);
+        for (std::pair<int, int>& point : path)
+        {
+            int pathX = point.first;
+            int pathY = point.second;
+            screen[(pathY + debugOffset) * SCREEN_WIDTH + pathX] = '.';
+        }
+
         // Draw the player on map
         screen[(int(player.getY()) + debugOffset) * SCREEN_WIDTH + int(player.getX())] = player.getTile();
     }

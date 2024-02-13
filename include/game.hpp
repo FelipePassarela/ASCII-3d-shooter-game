@@ -15,6 +15,7 @@
 #include <vector>
 #include <windows.h>
 #include "player.hpp"
+#include "AStar.hpp"
 
 /**
  * @class Game
