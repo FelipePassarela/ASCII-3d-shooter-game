@@ -41,7 +41,22 @@ std::vector<std::pair<int, int>> AStar::findPath(int startX, int startY, int end
 
 double AStar::Utils::heuristic(int startX, int startY, int endX, int endY)
 {
-    return sqrt((endX - startX) * (endX - startX) + (endY - startY) * (endY - startY));
+    // Manhattan distance
+    // return std::abs(endX - startX) + std::abs(endY - startY);
+
+    // Euclidean distance
+    return std::sqrt(std::pow(endX - startX, 2) + std::pow(endY - startY, 2));
+
+    // Diagonal distance
+    // return std::max(std::abs(endX - startX), std::abs(endY - startY));
+
+    // Octile distance
+    // int dx = std::abs(endX - startX);
+    // int dy = std::abs(endY - startY);
+    // return std::max(dx, dy) + (std::sqrt(2) - 1) * std::min(dx, dy);
+
+    // Chebyshev distance
+    // return std::max(std::abs(endX - startX), std::abs(endY - startY));
 }
 
 NodePtr AStar::Utils::chooseCurrentNode(AStar::NodeList& openList)
@@ -59,12 +74,9 @@ NodePtr AStar::Utils::chooseCurrentNode(AStar::NodeList& openList)
 
 bool AStar::Utils::isNodeInList(const NodePtr node, const NodeList& list)
 {
-    for (auto& n : list)
+    for (auto n : list)
     {
-        if (n->x == node->x && n->y == node->y)
-        {
-            return true;
-        }
+        if (*n == *node) return true;
     }
     return false;
 }
@@ -91,17 +103,17 @@ NodeList AStar::Utils::findNeighbours(const NodePtr node, const std::vector<std:
     int numRows = map.size();
     int numCols = map[0].size();
 
-    for (int i = -1; i <= 1; ++i)
+    for (int dx = -1; dx <= 1; ++dx)
     {
-        for (int j = -1; j <= 1; ++j)
+        for (int dy = -1; dy <= 1; ++dy)
         {
-            if (i == 0 && j == 0) continue;
+            if (dx == 0 && dy == 0) continue;
 
-            int x = node->x + i;
-            int y = node->y + j;
+            int x = node->x + dx;
+            int y = node->y + dy;
 
-            if (map[x][y] != ' ')                               continue;
-            if (x < 0 || x >= numRows || y < 0 || y >= numCols) continue;
+            if (map[y][x] != ' ')                               continue;
+            if (x < 0 || x >= numCols || y < 0 || y >= numRows) continue;
 
             neighbours.push_back(std::make_shared<Node>(x, y, 0, 0, nullptr));
         }
