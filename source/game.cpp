@@ -174,6 +174,7 @@ void Game::render2dObjects(wchar_t* screen)
             }
         }
 
+        // TODO: Calculate the path only when the player moves
         std::vector<std::pair<int, int>> path = AStar::findPath(int(player.getX()), int(player.getY()), 10, 1, map);
         for (std::pair<int, int>& point : path)
         {
