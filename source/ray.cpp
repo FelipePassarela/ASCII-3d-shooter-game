@@ -11,7 +11,7 @@
 #include "ray.hpp"
 #include <algorithm>
 
-void Ray::castRay(double playerX, double playerY, std::vector<std::wstring> map)
+void Ray::castRay(double playerX, double playerY, std::vector<std::string> map)
 {
     int newX = static_cast<int>(playerX);
     int newY = static_cast<int>(playerY);
@@ -76,7 +76,7 @@ void Ray::verifyBoundary(int mapX, int mapY, double playerX, double playerY)
     if (acos(p.at(2).second) < bound) hitBoundary = true;
 }
 
-void Ray::castRayDDA(double playerX, double playerY, std::vector<std::wstring> map)
+void Ray::castRayDDA(double playerX, double playerY, std::vector<std::string> map)
 {
     // Source: https://lodev.org/cgtutor/raycasting.html
 

@@ -81,7 +81,7 @@ public:
      * @param playerY The y-coordinate of the player's position.
      * @param map The map containing the game environment.
      */
-    void castRay(double playerX, double playerY, std::vector<std::wstring> map);
+    void castRay(double playerX, double playerY, std::vector<std::string> map);
 
     /**
      * Casts a ray using the Digital Differential Analyzer (DDA) algorithm.
@@ -94,7 +94,7 @@ public:
      * @param playerY The Y coordinate of the player's position.
      * @param map The map containing the game world.
      */
-    void castRayDDA(double playerX, double playerY, std::vector<std::wstring> map);
+    void castRayDDA(double playerX, double playerY, std::vector<std::string> map);
 
     /**
      * Verifies if the ray hits a boundary of a cell in the game map.
