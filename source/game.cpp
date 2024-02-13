@@ -232,17 +232,9 @@ void Game::findPathToObjective()
 
 void Game::render2dObjects(wchar_t* screen)
 {
-    size_t debugOffset = 0;
+    size_t yOffset = 0;
 
-    #ifdef DEBUG
-    wchar_t* debug = new wchar_t[SCREEN_WIDTH];
-    swprintf_s(debug, SCREEN_WIDTH, L"X=%3.2lf Y=%3.2lf A=%3.2lfpi FOV=%3.2lfpi FPS=%3.2lf", 
-        player.getX(), player.getY(), player.getAngle() / PI, player.getFOV() / PI, 1.0f / deltaTime);
-    for (std::size_t i = 0; i < wcslen(debug); ++i)
-        screen[i] = debug[i];
-    delete[] debug;
-    debugOffset++;
-    #endif
+    showDebugInfo(screen, yOffset);
 
     if (showMap)
     {
@@ -251,7 +243,7 @@ void Game::render2dObjects(wchar_t* screen)
         {
             for (int j = 0; j < MAP_WIDTH; ++j)
             {
-                screen[(i + debugOffset) * SCREEN_WIDTH + j] = map[i * MAP_WIDTH + j];
+                screen[(i + yOffset) * SCREEN_WIDTH + j] = map[i * MAP_WIDTH + j];
             }
         }
 
@@ -262,7 +254,7 @@ void Game::render2dObjects(wchar_t* screen)
             {
                 int rayX = point.first;
                 int rayY = point.second;
-                screen[(rayY + debugOffset) * SCREEN_WIDTH + rayX] = '-';
+                screen[(rayY + yOffset) * SCREEN_WIDTH + rayX] = '-';
             }
         }
 
@@ -272,12 +264,40 @@ void Game::render2dObjects(wchar_t* screen)
             {
                 int pathX = point.first;
                 int pathY = point.second;
-                screen[(pathY + debugOffset) * SCREEN_WIDTH + pathX] = '.';
+                screen[(pathY + yOffset) * SCREEN_WIDTH + pathX] = '.';
             }
         }
 
         // Draw the objective and the player
-        screen[int((objective.getY()) + debugOffset) * SCREEN_WIDTH + int(objective.getX())] = objective.getTile();
-        screen[(int(player.getY()) + debugOffset) * SCREEN_WIDTH + int(player.getX())] = player.getTile();
+        screen[int((objective.getY()) + yOffset) * SCREEN_WIDTH + int(objective.getX())] = objective.getTile();
+        screen[(int(player.getY()) + yOffset) * SCREEN_WIDTH + int(player.getX())] = player.getTile();
     }
+}
+
+void Game::showDebugInfo(wchar_t* screen, size_t& yOffset)
+{
+    #ifdef DEBUG
+    static auto previous = std::chrono::high_resolution_clock::now();
+    auto current = std::chrono::high_resolution_clock::now();
+
+    static double fps = 0.0;
+
+    wchar_t* debug = new wchar_t[SCREEN_WIDTH];
+    swprintf_s(debug, SCREEN_WIDTH, L"X=%3.2lf Y=%3.2lf A=%3.2lfpi FOV=%3.2lfpi FPS=%3.2lf",
+               player.getX(), player.getY(), player.getAngle() / PI, player.getFOV() / PI, fps);
+    for (std::size_t i = 0; i < wcslen(debug); ++i)
+    {
+        screen[i] = debug[i];
+    }
+
+    std::chrono::duration<double> elapsed = current - previous;
+    if (elapsed.count() > 1/6.0)
+    {
+        fps = 1.0 / deltaTime;
+        previous = current;
+    }
+
+    delete[] debug;
+    yOffset++;
+    #endif
 }

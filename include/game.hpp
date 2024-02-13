@@ -84,6 +84,18 @@ private:
     void render2dObjects(wchar_t* screen);
 
     /**
+     * @brief Displays debug information on the screen.
+     * 
+     * This function takes a pointer to the screen buffer and an offset value as parameters.
+     * It displays debug information on the screen starting from the specified offset and
+     * increments the offset value accordingly.
+     * 
+     * @param screen A pointer to the screen buffer.
+     * @param yOffset The offset value for displaying the debug information.
+     */
+    void showDebugInfo(wchar_t * screen, size_t &yOffset);
+
+    /**
      * @brief Creates a wall tile based on the distance of a ray.
      * 
      * This function takes a Ray object as input and calculates the appropriate wall tile
