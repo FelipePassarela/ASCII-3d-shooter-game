@@ -112,8 +112,8 @@ NodeList AStar::Utils::findNeighbours(const NodePtr node, const std::vector<std:
             int x = node->x + dx;
             int y = node->y + dy;
 
-            if (map[y][x] != ' ')                               continue;
             if (x < 0 || x >= numCols || y < 0 || y >= numRows) continue;
+            if (map[y][x] != ' ')                               continue;
 
             neighbours.push_back(std::make_shared<Node>(x, y, 0, 0, nullptr));
         }
