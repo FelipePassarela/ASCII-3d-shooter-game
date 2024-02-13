@@ -14,6 +14,9 @@
 #include <chrono>
 #include <cmath>
 
+// TODO: Add objective rendering
+// TODO: Add objective position randomization when reached
+
 void Game::run()
 {
     initialSetup();
@@ -146,7 +149,7 @@ void Game::readInput()
         else                                            player.setFOV(player.getInitialFOV());
     }
     if (!wasMPressed && isMPressed)             showMap = !showMap;
-    if (!wasPPressed && isPPressed)             showPathToObjective = !showPathToObjective;
+    if (!wasPPressed && isPPressed && showMap)  showPathToObjective = !showPathToObjective; // Only show path if map is shown
     if (GetAsyncKeyState(VK_SPACE) & 0x8000)    player.increaseFOV(deltaTime);
     if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)   running = false;
 
