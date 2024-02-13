@@ -16,6 +16,8 @@
 
 void Game::run()
 {
+    initialSetup();
+
     wchar_t* screen = new wchar_t[SCREEN_WIDTH * SCREEN_HEIGHT];
     HANDLE hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
     SetConsoleActiveScreenBuffer(hConsole);
@@ -93,6 +95,33 @@ wchar_t Game::createWallTileByDistance(Ray& ray)
     if (ray.getHitBoundary())                                   wallTile = ' ';
 
     return wallTile;
+}
+
+void Game::initialSetup()
+{
+    system("mode con: cols=120 lines=40"); // FIXME: This is not setting the console size
+
+    for (int i = 0; i < MAP_HEIGHT; ++i)
+    {
+        for (int j = 0; j < MAP_WIDTH; ++j)
+        {
+            if (map[i][j] == '<' || map[i][j] == '>' || map[i][j] == '^' || map[i][j] == 'v')
+            {
+                player.setX(j);
+                player.setY(i);
+                player.setAngle(PI / 2);
+                player.setTile(map[i][j]);
+                map[i][j] = ' ';
+            }
+            else if (map[i][j] == 'X')
+            {
+                objective.setX(j);
+                objective.setY(i);
+                objective.setTile(map[i][j]);
+                map[i][j] = ' ';
+            }
+        }
+    }
 }
 
 void Game::readInput()

@@ -16,6 +16,7 @@
 #include <windows.h>
 #include "player.hpp"
 #include "AStar.hpp"
+#include "objective.hpp"
 
 /**
  * @class Game
@@ -51,9 +52,9 @@ private:
         {"#    #    ################    #    #    ###########    #    #    #"},
         {"#    #                        #    #    #         #    #    #    #"},
         {"#    ##########################    #    #    #    #    #    #    #"},
-        {"#    #         #              #    #    #    #    #    #    #    #"},
+        {"#    #         #X             #    #    #    #    #    #    #    #"},
         {"#    #    #    ##########     #    #    ######    #    ######    #"},
-        {"#         #                   #    #              #              #"},
+        {"#         #                   #  ^ #              #              #"},
         {"##################################################################"},
     };    
     const int MAP_WIDTH = map[0].size();    
@@ -61,11 +62,21 @@ private:
     const int SCREEN_WIDTH = 120;           
     const int SCREEN_HEIGHT = 40;           
     double deltaTime;           ///< The time between frames.
-    Player player;              ///< The player object in the game.
+    Player player;
+    Objective objective;
     bool showMap = true;        ///< Whether to show the map on the screen.
+    bool showPath = false;      ///< Whether to show the path on the map.
     bool running = true;    
     
     /* <------------------------ Methods ------------------------> */
+
+    /**
+     * @brief Performs the initial setup for the game.
+     * 
+     * This function initializes the game by setting up the necessary components and variables.
+     * It should be called before starting the game loop.
+     */
+    void initialSetup();
 
     /**
      * @brief Reads the user input.
