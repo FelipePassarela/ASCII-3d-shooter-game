@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 
 /**
  * @namespace AStar
@@ -24,15 +25,16 @@ namespace AStar
         double gCost;
         double hCost;
         double fCost;
-        Node* parent;
+        std::shared_ptr<Node> parent;
 
-        Node(int x, int y, double gCost, double hCost, Node* parent) :
+        Node(int x, int y, double gCost, double hCost, std::shared_ptr<Node> parent) :
              x(x), y(y), gCost(gCost), hCost(hCost), fCost(gCost + hCost), parent(parent) {}
 
         bool operator==(const Node& other) const { return x == other.x && y == other.y; }
     }; // struct Node
 
-    using NodeList = std::vector<Node>;
+    using NodePtr = std::shared_ptr<Node>;  // Shared pointer to a Node
+    using NodeList = std::vector<NodePtr>;  // Vector of shared pointers to Nodes
 
     /**
      * @namespace Utils
@@ -53,15 +55,14 @@ namespace AStar
         double heuristic(int startX, int startY, int endX, int endY);
 
         /**
-         * @brief Chooses the current node from the open list based on a specific criteria.
+         * @brief Chooses the current node from the open list.
          * 
-         * This function selects the current node from the open list based on a specific criteria.
-         * It takes in an open list of nodes and returns a reference to the chosen node.
+         * This function selects the node with the lowest cost from the open list and returns it.
          * 
-         * @param openList The list of nodes from which to choose the current node.
-         * @return A reference to the chosen node.
+         * @param openList The list of open nodes.
+         * @return A pointer to the chosen node.
          */
-        Node& chooseCurrentNode(NodeList& openList);
+        NodePtr chooseCurrentNode(NodeList& openList);
 
         /**
          * Checks if a given node is present in a list of nodes.
@@ -70,7 +71,7 @@ namespace AStar
          * @param list The list of nodes to search in.
          * @return True if the node is found in the list, false otherwise.
          */
-        bool isNodeInList(const Node& node, const NodeList& list);
+        bool isNodeInList(const NodePtr node, const NodeList& list);
 
         /**
          * Reconstructs the path from the start node to the end node.
@@ -78,27 +79,31 @@ namespace AStar
          * @param endNode The end node of the path.
          * @return A vector of pairs representing the coordinates of the nodes in the path.
          */
-        std::vector<std::pair<int, int>> reconstructPath(Node& endNode);
+        std::vector<std::pair<int, int>> reconstructPath(NodePtr endNode);
 
         /**
-         * Finds the 8 neighboring nodes of the given node.
-         *
+         * @brief Finds the 8 neighboring nodes of a given node.
+         * 
          * @param node The node for which to find neighbors.
          * @param map The map containing the nodes.
-         * @return A list of neighboring nodes.
+         * @return The list of neighboring nodes.
          */
-        NodeList findNeighbours(const Node& node, const std::vector<std::string>& map);
+        NodeList findNeighbours(const NodePtr node, const std::vector<std::string>& map);
 
         /**
-         * Evaluates a neighbor node in the A* algorithm.
+         * @brief Evaluates a neighbor node in the A* algorithm.
+         * 
+         * This function calculates the cost and heuristic values for a neighbor node,
+         * and updates its parent and total cost if necessary. It also adds the neighbor
+         * node to the open list if it is not already in the closed list.
          * 
          * @param neighbour The neighbor node to evaluate.
          * @param currentNode The current node being evaluated.
          * @param endNode The end node of the path.
-         * @param openList The list of open nodes.
-         * @param closedList The list of closed nodes.
+         * @param openList The list of nodes to be evaluated.
+         * @param closedList The list of nodes that have already been evaluated.
          */
-        void evaluateNeighbour(Node& neighbour, Node& currentNode, const Node& endNode,
+        void evaluateNeighbour(NodePtr neighbour, NodePtr currentNode, const NodePtr endNode,
                                NodeList& openList, const NodeList& closedList);
     } // namespace Utils
 
