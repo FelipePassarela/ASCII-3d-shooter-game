@@ -79,9 +79,12 @@ public:
      * 
      * @param playerX The x-coordinate of the player's position.
      * @param playerY The y-coordinate of the player's position.
+     * @param mapWidth The width of the map.
+     * @param mapHeight The height of the map.
      * @param map The map containing the game environment.
      */
-    void castRay(double playerX, double playerY, std::vector<std::string> map);
+    void castRay(double playerX, double playerY, int mapWidth, int mapHeight, const std::string& map);
+
 
     /**
      * Casts a ray using the Digital Differential Analyzer (DDA) algorithm.

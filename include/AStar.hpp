@@ -85,10 +85,12 @@ namespace AStar
          * @brief Finds the 8 neighboring nodes of a given node.
          * 
          * @param node The node for which to find neighbors.
+         * @param mapWidth The width of the map.
+         * @param mapHeight The height of the map.
          * @param map The map containing the nodes.
          * @return The list of neighboring nodes.
          */
-        NodeList findNeighbours(const NodePtr node, const std::vector<std::string>& map);
+        NodeList findNeighbours(const NodePtr node, int mapWidth, int mapHeight, const std::string & map);
 
         /**
          * @brief Evaluates a neighbor node in the A* algorithm.
@@ -114,10 +116,12 @@ namespace AStar
      * @param startY The y-coordinate of the starting position.
      * @param endX The x-coordinate of the ending position.
      * @param endY The y-coordinate of the ending position.
+     * @param mapWidth The width of the map.
+     * @param mapHeight The height of the map.
      * @param map The map represented as a vector of strings.
      * @return A vector of pairs (x, y) representing the path from the starting position to the ending position.
      */
-    std::vector<std::pair<int, int>> findPath(int startX, int startY, int endX, int endY, const std::vector<std::string>& map);
+    std::vector<std::pair<int, int>> findPath(int startX, int startY, int endX, int endY, int mapWidth, int mapHeight, const std::string& map);
 } // namespace AStar
 
 #endif // ASTAR_HPP

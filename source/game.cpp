@@ -16,7 +16,36 @@
 
 // TODO: Add objective rendering
 // TODO: Add objective position randomization when reached
-// TODO: Change map to a 1D string to improve performance
+
+Game::Game() {
+    map += "##################################################################";
+    map += "#                             #                                  #";
+    map += "#    #    #    ##########     #     #########################    #";
+    map += "#    #    #    #              #                             #    #";
+    map += "#    #    #####################    #####################    #    #";
+    map += "#    #                             #                   #    #    #";
+    map += "#    ###################################     ###########    #    #";
+    map += "#    #              #                        #         #    #    #";
+    map += "#    ##########     #    #    ###########    #    #    #    ######";
+    map += "#    #              #    #    #         #    #    #    #         #";
+    map += "#    #     ##########    #    #####     #    #    #    #    #    #";
+    map += "#    #                   #    #         #    #    #    #    #    #";
+    map += "#    #####################    #     #####    #    #    #    #    #";
+    map += "#                             #              #    #    #    #    #";
+    map += "##########################    ################    #    ######    #";
+    map += "#              #         #    #                   #    #         #";
+    map += "#    #    #    #    #    #    #    ################    #####     #";
+    map += "#    #    #    #    #    #    #    #              #              #";
+    map += "#    #    #    #    #    #    #    #     ####################    #";
+    map += "#    #    #         #    #    #    #                        #    #";
+    map += "#    #    ################    #    #    ###########    #    #    #";
+    map += "#    #                        #    #    #         #    #    #    #";
+    map += "#    ##########################    #    #    #    #    #    #    #";
+    map += "#    #         #X             #    #    #    #    #    #    #    #";
+    map += "#    #    #    ##########     #    #    ######    #    ######    #";
+    map += "#         #                   #  ^ #              #              #";
+    map += "##################################################################";
+}
 
 void Game::run()
 {
@@ -58,7 +87,7 @@ void Game::render3dScene(wchar_t* screen)
         double rayAngle = (player.getAngle() + player.getFOV() / 2.0) - (x / float(SCREEN_WIDTH)) * player.getFOV();
         Ray ray(rayAngle);
 
-        ray.castRay(player.getX(), player.getY(), map);
+        ray.castRay(player.getX(), player.getY(), MAP_WIDTH, MAP_HEIGHT, map);
         player.addRay(ray);
 
         wchar_t wallTile = createWallTileByDistance(ray);
@@ -111,20 +140,21 @@ void Game::initialSetup()
     {
         for (int j = 0; j < MAP_WIDTH; ++j)
         {
-            if (map[i][j] == '<' || map[i][j] == '>' || map[i][j] == '^' || map[i][j] == 'v')
+            char mapTile = map[i * MAP_WIDTH + j];
+            if (mapTile == '<' || mapTile == '>' || mapTile == '^' || mapTile == 'v')
             {
                 player.setX(j);
                 player.setY(i);
                 player.setAngle(PI / 2);
-                player.setTile(map[i][j]);
-                map[i][j] = ' ';
+                player.setTile(mapTile);
+                map[i * MAP_WIDTH + j] = ' ';
             }
-            else if (map[i][j] == 'X')
+            else if (mapTile == 'X')
             {
                 objective.setX(j);
                 objective.setY(i);
-                objective.setTile(map[i][j]);
-                map[i][j] = ' ';
+                objective.setTile(mapTile);
+                map[i * MAP_WIDTH + j] = ' ';
             }
         }
     }
@@ -170,9 +200,12 @@ void Game::movePlayer()
 
     player.move(direction, deltaTime);
 
-    if (int(player.getX()) <= 0 || int(player.getX()) >= MAP_WIDTH ||
-        int(player.getY()) <= 0 || int(player.getY()) >= MAP_HEIGHT ||
-        map[int(player.getY())][int(player.getX())] == '#')
+    int playerX = int(player.getX());
+    int playerY = int(player.getY());
+
+    if (playerX <= 0 || playerX >= MAP_WIDTH ||
+        playerY <= 0 || playerY >= MAP_HEIGHT ||
+        map[playerY * MAP_WIDTH + playerX] == '#')
     {
         player.moveBack(direction, deltaTime);
     }
@@ -190,7 +223,7 @@ void Game::findPathToObjective()
         int objectiveX = int(objective.getX());
         int objectiveY = int(objective.getY());
 
-        pathToObjective = AStar::findPath(playerX, playerY, objectiveX, objectiveY, map);
+        pathToObjective = AStar::findPath(playerX, playerY, objectiveX, objectiveY, MAP_WIDTH, MAP_HEIGHT, map);
     }
 
     previousPlayerX = int(player.getX());
@@ -218,11 +251,11 @@ void Game::render2dObjects(wchar_t* screen)
         {
             for (int j = 0; j < MAP_WIDTH; ++j)
             {
-                screen[(i + debugOffset) * SCREEN_WIDTH + j] = map[i][j];
+                screen[(i + debugOffset) * SCREEN_WIDTH + j] = map[i * MAP_WIDTH + j];
             }
         }
 
-        // Draw the player's rays on map
+        // Draw the player's rays
         for (Ray ray : player.getRays())
         {
             for (std::pair<int, int>& point : ray.getPoints())
@@ -243,7 +276,7 @@ void Game::render2dObjects(wchar_t* screen)
             }
         }
 
-        // Draw the objective and the player on map
+        // Draw the objective and the player
         screen[int((objective.getY()) + debugOffset) * SCREEN_WIDTH + int(objective.getX())] = objective.getTile();
         screen[(int(player.getY()) + debugOffset) * SCREEN_WIDTH + int(player.getX())] = player.getTile();
     }
