@@ -32,6 +32,8 @@ void Game::run()
 
         readInput();
 
+        if (showPathToObjective) findPathToObjective();
+
         render3dScene(screen);
         render2dObjects(screen);
 
@@ -130,9 +132,12 @@ void Game::readInput()
 
     // This is necessary to toggle buttons
     static bool wasMPressed = false;
-    bool isMPressed = GetAsyncKeyState('M') & 0x8000;
     static bool wasEPressed = false;
+    static bool wasPPressed = false;
+
+    bool isMPressed = GetAsyncKeyState('M') & 0x8000;
     bool isEPressed = GetAsyncKeyState('E') & 0x8000;
+    bool isPPressed = GetAsyncKeyState('P') & 0x8000;
 
     if (!wasEPressed && isEPressed)
     {
@@ -141,11 +146,13 @@ void Game::readInput()
         else                                            player.setFOV(player.getInitialFOV());
     }
     if (!wasMPressed && isMPressed)             showMap = !showMap;
+    if (!wasPPressed && isPPressed)             showPathToObjective = !showPathToObjective;
     if (GetAsyncKeyState(VK_SPACE) & 0x8000)    player.increaseFOV(deltaTime);
     if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)   running = false;
 
     wasMPressed = isMPressed;
     wasEPressed = isEPressed;
+    wasPPressed = isPPressed;
 }
 
 void Game::movePlayer()
@@ -165,6 +172,25 @@ void Game::movePlayer()
     {
         player.moveBack(direction, deltaTime);
     }
+}
+
+void Game::findPathToObjective()
+{
+    static int previousPlayerX = -1;
+    static int previousPlayerY = -1;
+    int playerX = int(player.getX());
+    int playerY = int(player.getY());
+
+    if (previousPlayerX != playerX || previousPlayerY != playerY)
+    {
+        int objectiveX = int(objective.getX());
+        int objectiveY = int(objective.getY());
+
+        pathToObjective = AStar::findPath(playerX, playerY, objectiveX, objectiveY, map);
+    }
+
+    previousPlayerX = int(player.getX());
+    previousPlayerY = int(player.getY());
 }
 
 void Game::render2dObjects(wchar_t* screen)
@@ -203,16 +229,18 @@ void Game::render2dObjects(wchar_t* screen)
             }
         }
 
-        // TODO: Calculate the path only when the player moves
-        std::vector<std::pair<int, int>> path = AStar::findPath(int(player.getX()), int(player.getY()), 10, 1, map);
-        for (std::pair<int, int>& point : path)
+        if (showPathToObjective)
         {
-            int pathX = point.first;
-            int pathY = point.second;
-            screen[(pathY + debugOffset) * SCREEN_WIDTH + pathX] = '.';
+            for (std::pair<int, int>& point : pathToObjective)
+            {
+                int pathX = point.first;
+                int pathY = point.second;
+                screen[(pathY + debugOffset) * SCREEN_WIDTH + pathX] = '.';
+            }
         }
 
-        // Draw the player on map
+        // Draw the objective and the player on map
+        screen[int((objective.getY()) + debugOffset) * SCREEN_WIDTH + int(objective.getX())] = objective.getTile();
         screen[(int(player.getY()) + debugOffset) * SCREEN_WIDTH + int(player.getX())] = player.getTile();
     }
 }
