@@ -16,6 +16,7 @@
 
 // TODO: Add objective rendering
 // TODO: Add objective position randomization when reached
+// TODO: Change map to a 1D string to improve performance
 
 void Game::run()
 {
