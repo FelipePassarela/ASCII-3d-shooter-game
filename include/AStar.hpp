@@ -29,7 +29,7 @@ namespace AStar
 
         bool isNodeInList(const Node& node, const NodeList& list);
 
-        std::vector<std::pair<int, int>> reconstructPath(const Node& endNode);
+        std::vector<std::pair<int, int>> reconstructPath(Node& endNode);
 
         NodeList findNeighbours(const Node& node, const std::vector<std::string>& map);
 

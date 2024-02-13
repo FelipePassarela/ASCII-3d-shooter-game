@@ -57,14 +57,29 @@ Node& AStar::Utils::chooseCurrentNode(AStar::NodeList& openList)
 
 bool AStar::Utils::isNodeInList(const Node& node, const NodeList& list)
 {
-    for (auto& n : list)
+    for (auto& node : list)
     {
-        if (n.x == node.x && n.y == node.y)
+        if (node.x == node.x && node.y == node.y)
         {
             return true;
         }
     }
     return false;
+}
+
+std::vector<std::pair<int, int>> AStar::Utils::reconstructPath(Node& endNode)
+{
+    std::vector<std::pair<int, int>> path;
+    Node* currentNode = &endNode;
+
+    while (currentNode->parent != nullptr)
+    {
+        path.push_back(std::make_pair(currentNode->x, currentNode->y));
+        currentNode = currentNode->parent;
+    }
+
+    std::reverse(path.begin(), path.end());
+    return path;
 }
 
 NodeList AStar::Utils::findNeighbours(const Node& node, const std::vector<std::string>& map)
