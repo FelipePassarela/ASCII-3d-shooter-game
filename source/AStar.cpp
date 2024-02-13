@@ -5,7 +5,7 @@
 using namespace AStar;
 using namespace AStar::Utils;
 
-std::vector<std::pair<int, int>> AStar::findPath(int startX, int startY, int endX, int endY, const std::vector<std::string>& map)
+std::vector<std::pair<int, int>> AStar::findPath(int startX, int startY, int endX, int endY, int mapWidth, int mapHeight, const std::string& map)
 {
     NodeList openList;
     NodeList closedList;
@@ -27,7 +27,7 @@ std::vector<std::pair<int, int>> AStar::findPath(int startX, int startY, int end
         closedList.push_back(currentNode);
         openList.erase(std::remove(openList.begin(), openList.end(), currentNode), openList.end());
 
-        auto neighbours = findNeighbours(currentNode, map);
+        auto neighbours = findNeighbours(currentNode, mapWidth, mapHeight, map);
         for (auto& neighbour : neighbours)
         {
             evaluateNeighbour(neighbour, currentNode, endNode, openList, closedList);
@@ -96,12 +96,9 @@ std::vector<std::pair<int, int>> AStar::Utils::reconstructPath(NodePtr endNode)
     return path;
 }
 
-NodeList AStar::Utils::findNeighbours(const NodePtr node, const std::vector<std::string>& map)
+NodeList AStar::Utils::findNeighbours(const NodePtr node, int mapWidth, int mapHeight, const std::string& map)
 {
     NodeList neighbours;
-
-    int numRows = map.size();
-    int numCols = map[0].size();
 
     for (int dx = -1; dx <= 1; ++dx)
     {
@@ -112,8 +109,8 @@ NodeList AStar::Utils::findNeighbours(const NodePtr node, const std::vector<std:
             int x = node->x + dx;
             int y = node->y + dy;
 
-            if (x < 0 || x >= numCols || y < 0 || y >= numRows) continue;
-            if (map[y][x] != ' ')                               continue;
+            if (x < 0 || x >= mapWidth || y < 0 || y >= mapHeight)  continue;
+            if (map[y * mapWidth + x] != ' ')                       continue;
 
             neighbours.push_back(std::make_shared<Node>(x, y, 0, 0, nullptr));
         }

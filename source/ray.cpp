@@ -11,10 +11,10 @@
 #include "ray.hpp"
 #include <algorithm>
 
-void Ray::castRay(double playerX, double playerY, std::vector<std::string> map)
+void Ray::castRay(double playerX, double playerY, int mapWidth, int mapHeight, const std::string& map)
 {
-    int newX = static_cast<int>(playerX);
-    int newY = static_cast<int>(playerY);
+    int newX = int(playerX);
+    int newY = int(playerY);
     int oldX = newX;
     int oldY = newY;
 
@@ -24,15 +24,15 @@ void Ray::castRay(double playerX, double playerY, std::vector<std::string> map)
     {
         distance += 0.1;
 
-        newX = static_cast<int>(playerX + distance * cosf(angle));      // Formula: X = X0 + t * Dx. Source: https://en.wikipedia.org/wiki/Ray_casting. 
-        newY = static_cast<int>(playerY - distance * sinf(angle));      // X0 is the initial position, t is the parameter (distance here), and Dx is 
-                                                                        // the direction vector.
+        newX = int(playerX + distance * cosf(angle));       // Formula: X = X0 + t * Dx. Source: https://en.wikipedia.org/wiki/Ray_casting. 
+        newY = int(playerY - distance * sinf(angle));       // X0 is the initial position, t is the parameter (distance here), and Dx is 
+                                                            // the direction vector.
 
-        if (newX < 0 || newX >= int(map[0].size()) || newY < 0 || newY >= int(map.size()))
+        if (newX < 0 || newX >= mapWidth || newY < 0 || newY >= mapHeight)
         {
             hit = true;
         } 
-        else if (map[newY][newX] == '#')
+        else if (map[newY * mapWidth + newX] == '#')
         {
             hit = true;
             verifyBoundary(newX, newY, playerX, playerY);
