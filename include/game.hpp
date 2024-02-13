@@ -33,12 +33,12 @@ private:
     const int MAP_HEIGHT = 27;     
     const int SCREEN_WIDTH = 120;           
     const int SCREEN_HEIGHT = 40;           
-    double deltaTime;                                 // The time between frames.
+    double deltaTime;                                   // The time between frames.
     Player player;
-    Objective objective;
+    Objective objective;                                // The objective of the game.
     std::vector<std::pair<int, int>> pathToObjective;
-    bool showMap = true;                              // Whether to show the map on the screen.
-    bool showPathToObjective = false;                 // Whether to show the path to the objective on the map.
+    bool showMap = true;                                // Whether to show the map on the screen.
+    bool showPathToObjective = false;                   // Whether to show the path to the objective on the map.
     bool running = true;    
     
     /* <------------------------ Methods ------------------------> */
@@ -66,6 +66,14 @@ private:
      */
     void movePlayer();
 
+    /**
+     * @brief Finds the path to the objective.
+     * 
+     * This function calculates the path from the current position to the objective.
+     * It uses a A* algorithm to determine the optimal path.
+     * 
+     * @return void
+     */
     void findPathToObjective();
 
     /**
