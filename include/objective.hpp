@@ -75,11 +75,20 @@ public:
      * 
      * @param mapWidth The width of the game map.
      * @param mapHeight The height of the game map.
+     * @param map The game map.
      */
-    void randomizePosition(int mapWidth, int mapHeight)
+    void randomizePosition(int mapWidth, int mapHeight, const std::string& map)
     {
-        x = 1 + rand() % (mapWidth - 2);
-        y = 1 + rand() % (mapHeight - 2);
+        bool isAtWall = true;
+        while (isAtWall)
+        {
+            x = (double)(rand() % mapWidth);
+            y = (double)(rand() % mapHeight);
+            if (map[int(y) * mapWidth + int(x)] == ' ')
+            {
+                isAtWall = false;
+            }
+        }        
     }
 };
 

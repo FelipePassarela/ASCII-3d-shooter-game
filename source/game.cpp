@@ -15,7 +15,6 @@
 #include <cmath>
 
 // TODO: Add objective rendering
-// TODO: Add objective position randomization when reached
 
 Game::Game() {
     map += "##################################################################";
@@ -65,7 +64,8 @@ void Game::run()
 
         readInput();
 
-        if (showPathToObjective) findPathToObjective();
+        if (showPathToObjective)                                        findPathToObjective();
+        if (player.isAtPosition(objective.getX(), objective.getY()))    objective.randomizePosition(MAP_WIDTH, MAP_HEIGHT, map);
 
         render3dScene(screen);
         render2dObjects(screen);
