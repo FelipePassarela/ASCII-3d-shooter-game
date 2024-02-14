@@ -11,7 +11,7 @@
 #include "ray.hpp"
 #include <algorithm>
 
-void Ray::castRay(double playerX, double playerY, int mapWidth, int mapHeight, const std::string& map)
+void Ray::castRay(double playerX, double playerY, int mapWidth, int mapHeight, const std::string& map, const Objective& objective)
 {
     int newX = int(playerX);
     int newY = int(playerY);
@@ -31,10 +31,18 @@ void Ray::castRay(double playerX, double playerY, int mapWidth, int mapHeight, c
         if (newX < 0 || newX >= mapWidth || newY < 0 || newY >= mapHeight)
         {
             hit = true;
+            this->hitWall = true;
         } 
         else if (map[newY * mapWidth + newX] == '#')
         {
             hit = true;
+            this->hitWall = true;
+            verifyBoundary(newX, newY, playerX, playerY);
+        }
+        else if (newX == int(objective.getX()) && newY == int(objective.getY()))
+        {
+            hit = true;
+            this->hitObjective = true;
             verifyBoundary(newX, newY, playerX, playerY);
         }
         else if (newX != oldX || newY != oldY)

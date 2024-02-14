@@ -13,8 +13,7 @@
 #include <thread>
 #include <chrono>
 #include <cmath>
-
-// TODO: Add objective rendering
+#include <random>
 
 Game::Game() {
     map += "##################################################################";
@@ -32,7 +31,7 @@ Game::Game() {
     map += "#    #####################    #     #####    #    #    #    #    #";
     map += "#                             #              #    #    #    #    #";
     map += "##########################    ################    #    ######    #";
-    map += "#              #         #    #                   #    #         #";
+    map += "#              #         #    #  X                #    #         #";
     map += "#    #    #    #    #    #    #    ################    #####     #";
     map += "#    #    #    #    #    #    #    #              #              #";
     map += "#    #    #    #    #    #    #    #     ####################    #";
@@ -40,7 +39,7 @@ Game::Game() {
     map += "#    #    ################    #    #    ###########    #    #    #";
     map += "#    #                        #    #    #         #    #    #    #";
     map += "#    ##########################    #    #    #    #    #    #    #";
-    map += "#    #         #X             #    #    #    #    #    #    #    #";
+    map += "#    #         #              #    #    #    #    #    #    #    #";
     map += "#    #    #    ##########     #    #    ######    #    ######    #";
     map += "#         #                   #  ^ #              #              #";
     map += "##################################################################";
@@ -87,10 +86,10 @@ void Game::render3dScene(wchar_t* screen)
         double rayAngle = (player.getAngle() + player.getFOV() / 2.0) - (x / float(SCREEN_WIDTH)) * player.getFOV();
         Ray ray(rayAngle);
 
-        ray.castRay(player.getX(), player.getY(), MAP_WIDTH, MAP_HEIGHT, map);
+        ray.castRay(player.getX(), player.getY(), MAP_WIDTH, MAP_HEIGHT, map, objective);
         player.addRay(ray);
 
-        wchar_t wallTile = createWallTileByDistance(ray);
+        wchar_t wallTile = createWallTileByRay(ray);
 
         renderScreenByHeight(ray, screen, x, wallTile);
     }
@@ -116,20 +115,42 @@ void Game::renderScreenByHeight(Ray& ray, wchar_t* screen, int x, wchar_t wallTi
     }
 }
 
-wchar_t Game::createWallTileByDistance(Ray& ray)
+wchar_t Game::createWallTileByRay(Ray& ray)
 {
     wchar_t wallTile = ' ';
     
-    if (ray.getDistance() < 0.75)                               wallTile = 0x2593;  // Closest
-    else if (ray.getDistance() < ray.getMaxDepth() / 3.5)       wallTile = 0x2588;
-    else if (ray.getDistance() < ray.getMaxDepth() / 3.0)       wallTile = 0x2593;
-    else if (ray.getDistance() < ray.getMaxDepth() / 2.0)       wallTile = 0x2592;
-    else if (ray.getDistance() < ray.getMaxDepth())             wallTile = 0x2591;  // Farthest
-    else                                                        wallTile = ' ';
+    if (ray.getHitWall())
+    {
+        if (ray.getDistance() < 0.75)                           wallTile = 0x2593;  // Closest
+        else if (ray.getDistance() < ray.getMaxDepth() / 3.5)   wallTile = 0x2588;
+        else if (ray.getDistance() < ray.getMaxDepth() / 3.0)   wallTile = 0x2593;
+        else if (ray.getDistance() < ray.getMaxDepth() / 2.0)   wallTile = 0x2592;
+        else if (ray.getDistance() < ray.getMaxDepth())         wallTile = 0x2591;  // Farthest
+    }
+    else if (ray.getHitObjective())
+    {
+        randomizeWallTile(wallTile, ray.getDistance());
+    }
 
-    if (ray.getHitBoundary())                                   wallTile = ' ';
+    if (ray.getHitBoundary())                       wallTile = ' ';    
+    if (ray.getDistance() >= ray.getMaxDepth())     wallTile = ' ';
 
     return wallTile;
+}
+
+void Game::randomizeWallTile(wchar_t& wallTile, double rayDistance)
+{
+    wchar_t noiseChar = '\t';
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    std::uniform_int_distribution<> dis(0x0530, 0x058F); // Unicode range for Armenian characters
+    std::uniform_int_distribution<> dis2(1, int(rayDistance) * 50 + 10); 
+
+    int random = dis2(gen);
+
+    if (random == 1)    wallTile = noiseChar;
+    else                wallTile = dis(gen); 
 }
 
 void Game::initialSetup()
@@ -218,7 +239,7 @@ void Game::findPathToObjective()
     int playerX = int(player.getX());
     int playerY = int(player.getY());
 
-    if (previousPlayerX != playerX || previousPlayerY != playerY)
+    if (previousPlayerX != playerX || previousPlayerY != playerY)   // Only find path if the player has moved
     {
         int objectiveX = int(objective.getX());
         int objectiveY = int(objective.getY());
@@ -258,6 +279,7 @@ void Game::render2dObjects(wchar_t* screen)
             }
         }
 
+        // Draw the path to the objective
         if (showPathToObjective)
         {
             for (std::pair<int, int>& point : pathToObjective)

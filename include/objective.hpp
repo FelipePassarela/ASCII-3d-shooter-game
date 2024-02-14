@@ -12,6 +12,7 @@
 #define OBJECTIVE_HPP
 
 #include <stdlib.h>
+#include <random>
 
 /**
  * @class Objective
@@ -77,19 +78,7 @@ public:
      * @param mapHeight The height of the game map.
      * @param map The game map.
      */
-    void randomizePosition(int mapWidth, int mapHeight, const std::string& map)
-    {
-        bool isAtWall = true;
-        while (isAtWall)
-        {
-            x = (double)(rand() % mapWidth);
-            y = (double)(rand() % mapHeight);
-            if (map[int(y) * mapWidth + int(x)] == ' ')
-            {
-                isAtWall = false;
-            }
-        }        
-    }
+    void randomizePosition(int mapWidth, int mapHeight, const std::string& map);
 };
 
 #endif // OBJECTIVE_HPP

@@ -96,15 +96,26 @@ private:
     void showDebugInfo(wchar_t * screen, size_t &yOffset);
 
     /**
-     * @brief Creates a wall tile based on the distance of a ray.
+     * @brief Creates a wall tile based on the informations of a ray.
      * 
      * This function takes a Ray object as input and calculates the appropriate wall tile
-     * based on the distance of the ray. The wall tile is represented by a wide character (wchar_t).
+     * based on the informations of the ray. The wall tile is represented by a wide 
+     * character (wchar_t).
      * 
      * @param ray The Ray object representing the ray to calculate the wall tile for.
      * @return The wall tile represented by a wide character (wchar_t).
      */
-    wchar_t createWallTileByDistance(Ray& ray);
+    wchar_t createWallTileByRay(Ray& ray);
+
+    /**
+     * Randomizes the wall tile based on the ray distance.
+     * 
+     * It also creates artefacts on the screen tiles to make the scene look more scary.
+     * 
+     * @param wallTile The wall tile to be randomized.
+     * @param rayDistance The distance of the ray.
+     */
+    void randomizeWallTile(wchar_t& wallTile, double rayDistance);
 
     /**
      * Renders the 3D scene on the screen.
