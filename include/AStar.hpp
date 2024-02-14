@@ -7,6 +7,9 @@
  * @copyright Copyright (c) 2024
  * 
  */
+
+// TODO: Optimize the A* algorithm by using a priority queue for the open list and a hash set for the closed list.
+
 #ifndef ASTAR_HPP
 #define ASTAR_HPP
 
