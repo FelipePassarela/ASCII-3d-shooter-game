@@ -14,7 +14,7 @@ add_executable(ASCII-shooter-debug ${SOURCES} ${HEADERS})
 add_executable(ASCII-shooter-release ${SOURCES} ${HEADERS})
 
 target_compile_options(ASCII-shooter-debug PRIVATE -Wall -Wextra -g -O0 -DDEBUG)
-target_compile_options(ASCII-shooter-release PRIVATE -Wall -Wextra -DNDEBUG -O3)
+target_compile_options(ASCII-shooter-release PRIVATE -DNDEBUG -O3)
 
 set_target_properties(ASCII-shooter-debug PROPERTIES OUTPUT_NAME "bin/ASCII-shooter-debug")
 set_target_properties(ASCII-shooter-release PROPERTIES OUTPUT_NAME "bin/ASCII-shooter")

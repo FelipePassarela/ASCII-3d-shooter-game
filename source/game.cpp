@@ -2,7 +2,6 @@
  * @file game.cpp
  * @author Felipe Passarela (felipepassarela11@gmail.com)
  * @brief Game class implementation file.
- * @version 1.0
  * @date 2024-02-04
  * 
  * @copyright Copyright (c) 2024
@@ -13,9 +12,42 @@
 #include <thread>
 #include <chrono>
 #include <cmath>
+#include <random>
+
+Game::Game() {
+    map += "##################################################################";
+    map += "#                             #                                  #";
+    map += "#    #    #    ##########     #     #########################    #";
+    map += "#    #    #    #              #                             #    #";
+    map += "#    #    #####################    #####################    #    #";
+    map += "#    #                             #                   #    #    #";
+    map += "#    ###################################     ###########    #    #";
+    map += "#    #              #                        #         #    #    #";
+    map += "#    ##########     #    #    ###########    #    #    #    ######";
+    map += "#    #              #    #    #         #    #    #    #         #";
+    map += "#    #     ##########    #    #####     #    #    #    #    #    #";
+    map += "#    #                   #    #         #    #    #    #    #    #";
+    map += "#    #####################    #     #####    #    #    #    #    #";
+    map += "#                             #              #    #    #    #    #";
+    map += "##########################    ################    #    ######    #";
+    map += "#              #         #    #  X                #    #         #";
+    map += "#    #    #    #    #    #    #    ################    #####     #";
+    map += "#    #    #    #    #    #    #    #              #              #";
+    map += "#    #    #    #    #    #    #    #     ####################    #";
+    map += "#    #    #         #    #    #    #                        #    #";
+    map += "#    #    ################    #    #    ###########    #    #    #";
+    map += "#    #                        #    #    #         #    #    #    #";
+    map += "#    ##########################    #    #    #    #    #    #    #";
+    map += "#    #         #              #    #    #    #    #    #    #    #";
+    map += "#    #    #    ##########     #    #    ######    #    ######    #";
+    map += "#         #                   #  ^ #              #              #";
+    map += "##################################################################";
+}
 
 void Game::run()
 {
+    initialSetup();
+
     wchar_t* screen = new wchar_t[SCREEN_WIDTH * SCREEN_HEIGHT];
     HANDLE hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
     SetConsoleActiveScreenBuffer(hConsole);
@@ -29,6 +61,9 @@ void Game::run()
         previousTime = currentTime;
 
         readInput();
+
+        if (showPathToObjective)                                        findPathToObjective();
+        if (player.isAtPosition(objective.getX(), objective.getY()))    objective.randomizePosition(MAP_WIDTH, MAP_HEIGHT, map);
 
         render3dScene(screen);
         render2dObjects(screen);
@@ -50,10 +85,10 @@ void Game::render3dScene(wchar_t* screen)
         double rayAngle = (player.getAngle() + player.getFOV() / 2.0) - (x / float(SCREEN_WIDTH)) * player.getFOV();
         Ray ray(rayAngle);
 
-        ray.castRay(player.getX(), player.getY(), map);
+        ray.castRay(player.getX(), player.getY(), MAP_WIDTH, MAP_HEIGHT, map, objective);
         player.addRay(ray);
 
-        wchar_t wallTile = createWallTileByDistance(ray);
+        wchar_t wallTile = createWallTileByRay(ray);
 
         renderScreenByHeight(ray, screen, x, wallTile);
     }
@@ -79,20 +114,70 @@ void Game::renderScreenByHeight(Ray& ray, wchar_t* screen, int x, wchar_t wallTi
     }
 }
 
-wchar_t Game::createWallTileByDistance(Ray& ray)
+wchar_t Game::createWallTileByRay(Ray& ray)
 {
     wchar_t wallTile = ' ';
     
-    if (ray.getDistance() < 0.75)                               wallTile = 0x2593;  // Closest
-    else if (ray.getDistance() < ray.getMaxDepth() / 3.5)       wallTile = 0x2588;
-    else if (ray.getDistance() < ray.getMaxDepth() / 3.0)       wallTile = 0x2593;
-    else if (ray.getDistance() < ray.getMaxDepth() / 2.0)       wallTile = 0x2592;
-    else if (ray.getDistance() < ray.getMaxDepth())             wallTile = 0x2591;  // Farthest
-    else                                                        wallTile = ' ';
+    if (ray.getHitWall())
+    {
+        if (ray.getDistance() < 0.75)                           wallTile = 0x2593;  // Closest
+        else if (ray.getDistance() < ray.getMaxDepth() / 3.5)   wallTile = 0x2588;
+        else if (ray.getDistance() < ray.getMaxDepth() / 3.0)   wallTile = 0x2593;
+        else if (ray.getDistance() < ray.getMaxDepth() / 2.0)   wallTile = 0x2592;
+        else if (ray.getDistance() < ray.getMaxDepth())         wallTile = 0x2591;  // Farthest
+    }
+    else if (ray.getHitObjective())
+    {
+        randomizeWallTile(wallTile, ray.getDistance());
+    }
 
-    if (ray.getHitBoundary())                                   wallTile = ' ';
+    if (ray.getHitBoundary())                       wallTile = ' ';    
+    if (ray.getDistance() >= ray.getMaxDepth())     wallTile = ' ';
 
     return wallTile;
+}
+
+void Game::randomizeWallTile(wchar_t& wallTile, double rayDistance)
+{
+    wchar_t noiseChar = '\t';
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    std::uniform_int_distribution<> dis(0x0530, 0x058F); // Unicode range for Armenian characters
+    std::uniform_int_distribution<> dis2(1, int(rayDistance) * 40 + 10); 
+
+    int random = dis2(gen);
+
+    if (random == 1)    wallTile = noiseChar;
+    else                wallTile = dis(gen); 
+}
+
+void Game::initialSetup()
+{
+    system("mode con: cols=120 lines=40"); // FIXME: This is not setting the console size
+
+    for (int i = 0; i < MAP_HEIGHT; ++i)
+    {
+        for (int j = 0; j < MAP_WIDTH; ++j)
+        {
+            char mapTile = map[i * MAP_WIDTH + j];
+            if (mapTile == '<' || mapTile == '>' || mapTile == '^' || mapTile == 'v')
+            {
+                player.setX(j);
+                player.setY(i);
+                player.setAngle(PI / 2);
+                player.setTile(mapTile);
+                map[i * MAP_WIDTH + j] = ' ';
+            }
+            else if (mapTile == 'X')
+            {
+                objective.setX(j);
+                objective.setY(i);
+                objective.setTile(mapTile);
+                map[i * MAP_WIDTH + j] = ' ';
+            }
+        }
+    }
 }
 
 void Game::readInput()
@@ -101,9 +186,12 @@ void Game::readInput()
 
     // This is necessary to toggle buttons
     static bool wasMPressed = false;
-    bool isMPressed = GetAsyncKeyState('M') & 0x8000;
     static bool wasEPressed = false;
+    static bool wasPPressed = false;
+
+    bool isMPressed = GetAsyncKeyState('M') & 0x8000;
     bool isEPressed = GetAsyncKeyState('E') & 0x8000;
+    bool isPPressed = GetAsyncKeyState('P') & 0x8000;
 
     if (!wasEPressed && isEPressed)
     {
@@ -112,11 +200,13 @@ void Game::readInput()
         else                                            player.setFOV(player.getInitialFOV());
     }
     if (!wasMPressed && isMPressed)             showMap = !showMap;
+    if (!wasPPressed && isPPressed && showMap)  showPathToObjective = !showPathToObjective; // Only show path if map is shown
     if (GetAsyncKeyState(VK_SPACE) & 0x8000)    player.increaseFOV(deltaTime);
     if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)   running = false;
 
     wasMPressed = isMPressed;
     wasEPressed = isEPressed;
+    wasPPressed = isPPressed;
 }
 
 void Game::movePlayer()
@@ -130,27 +220,41 @@ void Game::movePlayer()
 
     player.move(direction, deltaTime);
 
-    if (int(player.getX()) <= 0 || int(player.getX()) >= MAP_WIDTH ||
-        int(player.getY()) <= 0 || int(player.getY()) >= MAP_HEIGHT ||
-        map[int(player.getY())][int(player.getX())] == '#')
+    int playerX = int(player.getX());
+    int playerY = int(player.getY());
+
+    if (playerX <= 0 || playerX >= MAP_WIDTH ||
+        playerY <= 0 || playerY >= MAP_HEIGHT ||
+        map[playerY * MAP_WIDTH + playerX] == '#')
     {
         player.moveBack(direction, deltaTime);
     }
 }
 
+void Game::findPathToObjective()
+{
+    static int previousPlayerX = -1;
+    static int previousPlayerY = -1;
+    int playerX = int(player.getX());
+    int playerY = int(player.getY());
+
+    if (previousPlayerX != playerX || previousPlayerY != playerY)   // Only find path if the player has moved
+    {
+        int objectiveX = int(objective.getX());
+        int objectiveY = int(objective.getY());
+
+        pathToObjective = AStar::findPath(playerX, playerY, objectiveX, objectiveY, MAP_WIDTH, MAP_HEIGHT, map);
+    }
+
+    previousPlayerX = int(player.getX());
+    previousPlayerY = int(player.getY());
+}
+
 void Game::render2dObjects(wchar_t* screen)
 {
-    size_t debugOffset = 0;
+    size_t yOffset = 0;
 
-    #ifdef DEBUG
-    wchar_t* debug = new wchar_t[SCREEN_WIDTH];
-    swprintf_s(debug, SCREEN_WIDTH, L"X=%3.2lf Y=%3.2lf A=%3.2lfpi FOV=%3.2lfpi FPS=%3.2lf", 
-        player.getX(), player.getY(), player.getAngle() / PI, player.getFOV() / PI, 1.0f / deltaTime);
-    for (std::size_t i = 0; i < wcslen(debug); ++i)
-        screen[i] = debug[i];
-    delete[] debug;
-    debugOffset++;
-    #endif
+    showDebugInfo(screen, yOffset);
 
     if (showMap)
     {
@@ -159,22 +263,62 @@ void Game::render2dObjects(wchar_t* screen)
         {
             for (int j = 0; j < MAP_WIDTH; ++j)
             {
-                screen[(i + debugOffset) * SCREEN_WIDTH + j] = map[i][j];
+                screen[(i + yOffset) * SCREEN_WIDTH + j] = map[i * MAP_WIDTH + j];
             }
         }
 
-        // Draw the player's rays on map
+        // Draw the player's rays
         for (Ray ray : player.getRays())
         {
             for (std::pair<int, int>& point : ray.getPoints())
             {
                 int rayX = point.first;
                 int rayY = point.second;
-                screen[(rayY + debugOffset) * SCREEN_WIDTH + rayX] = '-';
+                screen[(rayY + yOffset) * SCREEN_WIDTH + rayX] = '-';
             }
         }
 
-        // Draw the player on map
-        screen[(int(player.getY()) + debugOffset) * SCREEN_WIDTH + int(player.getX())] = player.getTile();
+        // Draw the path to the objective
+        if (showPathToObjective)
+        {
+            for (std::pair<int, int>& point : pathToObjective)
+            {
+                int pathX = point.first;
+                int pathY = point.second;
+                screen[(pathY + yOffset) * SCREEN_WIDTH + pathX] = '.';
+            }
+        }
+
+        // Draw the objective and the player
+        screen[int((objective.getY()) + yOffset) * SCREEN_WIDTH + int(objective.getX())] = objective.getTile();
+        screen[(int(player.getY()) + yOffset) * SCREEN_WIDTH + int(player.getX())] = player.getTile();
     }
+}
+
+void Game::showDebugInfo(wchar_t* screen, size_t& yOffset)
+{
+    #ifdef DEBUG
+    static auto previous = std::chrono::high_resolution_clock::now();
+    auto current = std::chrono::high_resolution_clock::now();
+
+    static double fps = 0.0;
+
+    wchar_t* debug = new wchar_t[SCREEN_WIDTH];
+    swprintf_s(debug, SCREEN_WIDTH, L"X=%3.2lf Y=%3.2lf A=%3.2lfpi FOV=%3.2lfpi FPS=%3.2lf",
+               player.getX(), player.getY(), player.getAngle() / PI, player.getFOV() / PI, fps);
+    for (std::size_t i = 0; i < wcslen(debug); ++i)
+    {
+        screen[i] = debug[i];
+    }
+
+    std::chrono::duration<double> elapsed = current - previous;
+    if (elapsed.count() > 1/6.0)
+    {
+        fps = 1.0 / deltaTime;
+        previous = current;
+    }
+
+    delete[] debug;
+    yOffset++;
+    #endif
 }

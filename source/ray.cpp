@@ -2,7 +2,6 @@
  * @file ray.cpp
  * @author Felipe Passarela (felipepassarela11@gmail.com)
  * @brief Ray class implementation file.
- * @version 1.0
  * @date 2024-02-04
  * 
  * @copyright Copyright (c) 2024
@@ -11,10 +10,10 @@
 #include "ray.hpp"
 #include <algorithm>
 
-void Ray::castRay(double playerX, double playerY, std::vector<std::wstring> map)
+void Ray::castRay(double playerX, double playerY, int mapWidth, int mapHeight, const std::string& map, const Objective& objective)
 {
-    int newX = static_cast<int>(playerX);
-    int newY = static_cast<int>(playerY);
+    int newX = int(playerX);
+    int newY = int(playerY);
     int oldX = newX;
     int oldY = newY;
 
@@ -24,17 +23,25 @@ void Ray::castRay(double playerX, double playerY, std::vector<std::wstring> map)
     {
         distance += 0.1;
 
-        newX = static_cast<int>(playerX + distance * cosf(angle));      // Formula: X = X0 + t * Dx. Source: https://en.wikipedia.org/wiki/Ray_casting. 
-        newY = static_cast<int>(playerY - distance * sinf(angle));      // X0 is the initial position, t is the parameter (distance here), and Dx is 
-                                                                        // the direction vector.
+        newX = int(playerX + distance * cosf(angle));       // Formula: X = X0 + t * Dx. Source: https://en.wikipedia.org/wiki/Ray_casting. 
+        newY = int(playerY - distance * sinf(angle));       // X0 is the initial position, t is the parameter (distance here), and Dx is 
+                                                            // the direction vector.
 
-        if (newX < 0 || newX >= int(map[0].size()) || newY < 0 || newY >= int(map.size()))
+        if (newX < 0 || newX >= mapWidth || newY < 0 || newY >= mapHeight)
         {
             hit = true;
+            this->hitWall = true;
         } 
-        else if (map[newY][newX] == '#')
+        else if (map[newY * mapWidth + newX] == '#')
         {
             hit = true;
+            this->hitWall = true;
+            verifyBoundary(newX, newY, playerX, playerY);
+        }
+        else if (newX == int(objective.getX()) && newY == int(objective.getY()))
+        {
+            hit = true;
+            this->hitObjective = true;
             verifyBoundary(newX, newY, playerX, playerY);
         }
         else if (newX != oldX || newY != oldY)
@@ -76,7 +83,7 @@ void Ray::verifyBoundary(int mapX, int mapY, double playerX, double playerY)
     if (acos(p.at(2).second) < bound) hitBoundary = true;
 }
 
-void Ray::castRayDDA(double playerX, double playerY, std::vector<std::wstring> map)
+void Ray::castRayDDA(double playerX, double playerY, std::vector<std::string> map)
 {
     // Source: https://lodev.org/cgtutor/raycasting.html
 

@@ -2,7 +2,6 @@
  * @file game.hpp
  * @author Felipe Passarela (felipepassarela11@gmail.com)
  * @brief Game class header file.
- * @version 1.0
  * @date 2024-02-04
  * 
  * @copyright Copyright (c) 2024
@@ -15,6 +14,8 @@
 #include <vector>
 #include <windows.h>
 #include "player.hpp"
+#include "AStar.hpp"
+#include "objective.hpp"
 
 /**
  * @class Game
@@ -26,45 +27,28 @@
 class Game
 {
 private:
-    std::vector<std::wstring> map = {
-        {L"##################################################################"},
-        {L"#                             #                                  #"},
-        {L"#    #    #    ##########     #     #########################    #"},
-        {L"#    #    #    #              #                             #    #"},
-        {L"#    #    #####################    #####################    #    #"},
-        {L"#    #                             #                   #    #    #"},
-        {L"#    ###################################     ###########    #    #"},
-        {L"#    #              #                        #         #    #    #"},
-        {L"#    ##########     #    #    ###########    #    #    #    ######"},
-        {L"#    #              #    #    #         #    #    #    #         #"},
-        {L"#    #     ##########    #    #####     #    #    #    #    #    #"},
-        {L"#    #                   #    #         #    #    #    #    #    #"},
-        {L"#    #####################    #     #####    #    #    #    #    #"},
-        {L"#                             #              #    #    #    #    #"},
-        {L"##########################    ################    #    ######    #"},
-        {L"#              #         #    #                   #    #         #"},
-        {L"#    #    #    #    #    #    #    ################    #####     #"},
-        {L"#    #    #    #    #    #    #    #              #              #"},
-        {L"#    #    #    #    #    #    #    #     ####################    #"},
-        {L"#    #    #         #    #    #    #                        #    #"},
-        {L"#    #    ################    #    #    ###########    #    #    #"},
-        {L"#    #                        #    #    #         #    #    #    #"},
-        {L"#    ##########################    #    #    #    #    #    #    #"},
-        {L"#    #         #              #    #    #    #    #    #    #    #"},
-        {L"#    #    #    ##########     #    #    ######    #    ######    #"},
-        {L"#         #                   #    #              #              #"},
-        {L"##################################################################"},
-    };    
-    const int MAP_WIDTH = map[0].size();    
-    const int MAP_HEIGHT = map.size();      
+    std::string map;
+    const int MAP_WIDTH = 66;  
+    const int MAP_HEIGHT = 27;     
     const int SCREEN_WIDTH = 120;           
     const int SCREEN_HEIGHT = 40;           
-    double deltaTime;           ///< The time between frames.
-    Player player;              ///< The player object in the game.
-    bool showMap = true;        ///< Whether to show the map on the screen.
+    double deltaTime;                                   // The time between frames.
+    Player player;
+    Objective objective;                                // The objective of the game.
+    std::vector<std::pair<int, int>> pathToObjective;
+    bool showMap = true;                                // Whether to show the map on the screen.
+    bool showPathToObjective = false;                   // Whether to show the path to the objective on the map.
     bool running = true;    
     
     /* <------------------------ Methods ------------------------> */
+
+    /**
+     * @brief Performs the initial setup for the game.
+     * 
+     * This function initializes the game by setting up the necessary components and variables.
+     * It should be called before starting the game loop.
+     */
+    void initialSetup();
 
     /**
      * @brief Reads the user input.
@@ -82,6 +66,16 @@ private:
     void movePlayer();
 
     /**
+     * @brief Finds the path to the objective.
+     * 
+     * This function calculates the path from the current position to the objective.
+     * It uses a A* algorithm to determine the optimal path.
+     * 
+     * @return void
+     */
+    void findPathToObjective();
+
+    /**
      * Renders the 2D objects on the screen.
      *
      * @param screen The screen buffer to render the objects on.
@@ -89,15 +83,38 @@ private:
     void render2dObjects(wchar_t* screen);
 
     /**
-     * @brief Creates a wall tile based on the distance of a ray.
+     * @brief Displays debug information on the screen.
+     * 
+     * This function takes a pointer to the screen buffer and an offset value as parameters.
+     * It displays debug information on the screen starting from the specified offset and
+     * increments the offset value accordingly.
+     * 
+     * @param screen A pointer to the screen buffer.
+     * @param yOffset The offset value for displaying the debug information.
+     */
+    void showDebugInfo(wchar_t * screen, size_t &yOffset);
+
+    /**
+     * @brief Creates a wall tile based on the informations of a ray.
      * 
      * This function takes a Ray object as input and calculates the appropriate wall tile
-     * based on the distance of the ray. The wall tile is represented by a wide character (wchar_t).
+     * based on the informations of the ray. The wall tile is represented by a wide 
+     * character (wchar_t).
      * 
      * @param ray The Ray object representing the ray to calculate the wall tile for.
      * @return The wall tile represented by a wide character (wchar_t).
      */
-    wchar_t createWallTileByDistance(Ray& ray);
+    wchar_t createWallTileByRay(Ray& ray);
+
+    /**
+     * Randomizes the wall tile based on the ray distance.
+     * 
+     * It also creates artefacts on the screen tiles to make the scene look more scary.
+     * 
+     * @param wallTile The wall tile to be randomized.
+     * @param rayDistance The distance of the ray.
+     */
+    void randomizeWallTile(wchar_t& wallTile, double rayDistance);
 
     /**
      * Renders the 3D scene on the screen.
@@ -117,7 +134,7 @@ private:
     void renderScreenByHeight(Ray& ray, wchar_t* screen, int x, wchar_t wallTile);
 
 public:
-    Game() {}
+    Game();
 
     ~Game() {}
 

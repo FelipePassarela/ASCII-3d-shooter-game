@@ -2,7 +2,6 @@
  * @file player.hpp
  * @author Felipe Passarela (felipepassarela11@gmail.com)
  * @brief Player class header file.
- * @version 1.0
  * @date 2024-02-04
  * 
  * @copyright Copyright (c) 2024
@@ -158,6 +157,18 @@ public:
     void moveBack(Direction direction, double deltaTime);
 
     /**
+     * Checks if the player is at the specified position.
+     * 
+     * @param x The x-coordinate of the position.
+     * @param y The y-coordinate of the position.
+     * @return True if the player is at the specified position, false otherwise.
+     */
+    bool isAtPosition(int x, int y)
+    {
+        return (int)this->x == x && (int)this->y == y;
+    }
+
+    /**
      * @brief Updates the player's tile based on its angle.
      */
     void updateTile();
@@ -174,7 +185,7 @@ public:
      * 
      * @param ray The ray to be added.
      */
-    void addRay(Ray ray)
+    void addRay(Ray& ray)
     {
         rays.push_back(ray);
     }

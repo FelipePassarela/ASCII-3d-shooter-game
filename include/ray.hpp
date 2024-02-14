@@ -2,7 +2,6 @@
  * @file ray.hpp
  * @author Felipe Passarela (felipepassarela11@gmail.com)
  * @brief Ray class header file.
- * @version 1.0
  * @date 2024-02-04
  * 
  * @copyright Copyright (c) 2024
@@ -14,6 +13,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include "objective.hpp"
 
 /**
  * @class Ray
@@ -28,6 +28,8 @@ private:
     double angle = 0.0f;
     double distance = 0.0f;
     double maxDepth = 16.0f;
+    bool hitWall = false;
+    bool hitObjective = false;
     bool hitBoundary = false;
     std::vector<std::pair<int, int>> points;    ///< The points where the ray hits the map.
 
@@ -46,6 +48,10 @@ public:
 
     double getMaxDepth() const { return maxDepth; }
 
+    bool getHitWall() const { return hitWall; }
+
+    bool getHitObjective() const { return hitObjective; }
+
     bool getHitBoundary() const { return hitBoundary; }
 
     /**
@@ -63,6 +69,10 @@ public:
 
     void setMaxDepth(double newMaxDepth) { maxDepth = newMaxDepth; }
 
+    void setHitWall(bool newHitWall) { hitWall = newHitWall; }
+
+    void setHitObjective(bool newHitObjective) { hitObjective = newHitObjective; }
+
     void setHitBoundary(bool newHitBoundary) { hitBoundary = newHitBoundary; }
 
     /**
@@ -79,11 +89,16 @@ public:
      * 
      * @param playerX The x-coordinate of the player's position.
      * @param playerY The y-coordinate of the player's position.
+     * @param mapWidth The width of the map.
+     * @param mapHeight The height of the map.
      * @param map The map containing the game environment.
+     * @param objective The objective of the game.
      */
-    void castRay(double playerX, double playerY, std::vector<std::wstring> map);
+    void castRay(double playerX, double playerY, int mapWidth, int mapHeight, const std::string& map, const Objective& objective);
 
     /**
+     * This function is deprecated.
+     * 
      * Casts a ray using the Digital Differential Analyzer (DDA) algorithm.
      * 
      * Besides the perfomance gains, the DDA algorithm isn't appropriate for this game because of the 
@@ -94,7 +109,7 @@ public:
      * @param playerY The Y coordinate of the player's position.
      * @param map The map containing the game world.
      */
-    void castRayDDA(double playerX, double playerY, std::vector<std::wstring> map);
+    void castRayDDA(double playerX, double playerY, std::vector<std::string> map);
 
     /**
      * Verifies if the ray hits a boundary of a cell in the game map.
