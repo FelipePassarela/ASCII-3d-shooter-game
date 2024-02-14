@@ -1,3 +1,12 @@
+/**
+ * @file objective.cpp
+ * @author Felipe Passarela (felipepassarela11@gmail.com)
+ * @brief Objective class implementation file.
+ * @date 2024-02-14
+ * 
+ * @copyright Copyright (c) 2024
+ * 
+ */
 #include "objective.hpp"
 
 void Objective::randomizePosition(int mapWidth, int mapHeight, const std::string& map)

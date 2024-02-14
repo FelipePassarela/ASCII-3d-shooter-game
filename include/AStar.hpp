@@ -1,3 +1,12 @@
+/**
+ * @file AStar.hpp
+ * @author Felipe Passarela (feliepassarela11@gmail.com)
+ * @brief A* pathfinding algorithm header file.
+ * @date 2024-02-14
+ * 
+ * @copyright Copyright (c) 2024
+ * 
+ */
 #ifndef ASTAR_HPP
 #define ASTAR_HPP
 

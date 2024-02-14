@@ -1,3 +1,12 @@
+/**
+ * @file AStar.cpp
+ * @author Felipe Passarela (felipepassarela11@gmail.com)
+ * @brief A* pathfinding algorithm implementation file.
+ * @date 2024-02-14
+ * 
+ * @copyright Copyright (c) 2024
+ * 
+ */
 #include "AStar.hpp"
 #include <algorithm>
 #include <cmath>

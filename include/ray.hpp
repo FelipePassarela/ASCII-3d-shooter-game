@@ -2,7 +2,6 @@
  * @file ray.hpp
  * @author Felipe Passarela (felipepassarela11@gmail.com)
  * @brief Ray class header file.
- * @version 1.0
  * @date 2024-02-04
  * 
  * @copyright Copyright (c) 2024

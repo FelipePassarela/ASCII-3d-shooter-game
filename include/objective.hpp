@@ -2,7 +2,6 @@
  * @file objective.hpp
  * @author Felipe Passarela (felipepassarela11@gmail.com)
  * @brief Objective class header file.
- * @version 0.1
  * @date 2024-02-13
  * 
  * @copyright Copyright (c) 2024
