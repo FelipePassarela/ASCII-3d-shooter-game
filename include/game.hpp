@@ -107,16 +107,6 @@ private:
     wchar_t createWallTileByRay(Ray& ray);
 
     /**
-     * Randomizes the wall tile based on the ray distance.
-     * 
-     * It also creates artefacts on the screen tiles to make the scene look more scary.
-     * 
-     * @param wallTile The wall tile to be randomized.
-     * @param rayDistance The distance of the ray.
-     */
-    void randomizeWallTile(wchar_t& wallTile, double rayDistance);
-
-    /**
      * Renders the 3D scene on the screen.
      *
      * @param screen The screen buffer to render the scene on.

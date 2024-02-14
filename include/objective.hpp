@@ -78,6 +78,16 @@ public:
      * @param map The game map.
      */
     void randomizePosition(int mapWidth, int mapHeight, const std::string& map);
+
+    /**
+     * Randomizes the wall tile based on the ray distance.
+     * 
+     * It also creates artefacts on the screen tiles to make the scene look more scary.
+     * 
+     * @param wallTile The wall tile to be randomized.
+     * @param rayDistance The distance of the ray.
+     */
+    static void randomizeWallTile(wchar_t& wallTile, double rayDistance);
 };
 
 #endif // OBJECTIVE_HPP

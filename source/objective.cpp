@@ -28,3 +28,18 @@ void Objective::randomizePosition(int mapWidth, int mapHeight, const std::string
         }
     }        
 }
+
+void Objective::randomizeWallTile(wchar_t& wallTile, double rayDistance)
+{
+    wchar_t noiseChar = '\t';
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    std::uniform_int_distribution<> dis(0x0530, 0x058F); // Unicode range for Armenian characters
+    std::uniform_int_distribution<> dis2(1, int(rayDistance) * 40 + 10); 
+
+    int random = dis2(gen);
+
+    if (random == 1)    wallTile = noiseChar;
+    else                wallTile = dis(gen); 
+}
