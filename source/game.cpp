@@ -139,8 +139,6 @@ wchar_t Game::createWallTileByRay(Ray& ray)
 
 void Game::initialSetup()
 {
-    system("mode con: cols=120 lines=40"); // FIXME: This is not setting the console size
-
     for (int i = 0; i < MAP_HEIGHT; ++i)
     {
         for (int j = 0; j < MAP_WIDTH; ++j)
