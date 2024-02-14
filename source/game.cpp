@@ -13,6 +13,7 @@
 #include <thread>
 #include <chrono>
 #include <cmath>
+#include <random>
 
 Game::Game() {
     map += "##################################################################";
@@ -128,14 +129,28 @@ wchar_t Game::createWallTileByRay(Ray& ray)
     }
     else if (ray.getHitObjective())
     {
-        if (ray.getDistance() < 1.0)                            wallTile = 0x2550;
-        else                                                    wallTile = 0x256C;
+        randomizeWallTile(wallTile, ray.getDistance());
     }
 
-    if (ray.getHitBoundary())                                   wallTile = ' ';    
-    if (ray.getDistance() >= ray.getMaxDepth())                 wallTile = ' ';
+    if (ray.getHitBoundary())                       wallTile = ' ';    
+    if (ray.getDistance() >= ray.getMaxDepth())     wallTile = ' ';
 
     return wallTile;
+}
+
+void Game::randomizeWallTile(wchar_t& wallTile, double rayDistance)
+{
+    wchar_t noiseChar = '\t';
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    std::uniform_int_distribution<> dis(0x0530, 0x058F); // Unicode range for Armenian characters
+    std::uniform_int_distribution<> dis2(1, int(rayDistance) * 50 + 10); 
+
+    int random = dis2(gen);
+
+    if (random == 1)    wallTile = noiseChar;
+    else                wallTile = dis(gen); 
 }
 
 void Game::initialSetup()
