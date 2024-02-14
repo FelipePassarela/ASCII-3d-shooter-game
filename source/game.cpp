@@ -145,7 +145,7 @@ void Game::randomizeWallTile(wchar_t& wallTile, double rayDistance)
     std::mt19937 gen(rd());
 
     std::uniform_int_distribution<> dis(0x0530, 0x058F); // Unicode range for Armenian characters
-    std::uniform_int_distribution<> dis2(1, int(rayDistance) * 50 + 10); 
+    std::uniform_int_distribution<> dis2(1, int(rayDistance) * 40 + 10); 
 
     int random = dis2(gen);
 
