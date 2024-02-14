@@ -186,7 +186,7 @@ public:
      * 
      * @param ray The ray to be added.
      */
-    void addRay(Ray ray)
+    void addRay(Ray& ray)
     {
         rays.push_back(ray);
     }

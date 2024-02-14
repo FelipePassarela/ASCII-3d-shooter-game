@@ -14,8 +14,6 @@
 #include <chrono>
 #include <cmath>
 
-// TODO: Add objective rendering
-
 Game::Game() {
     map += "##################################################################";
     map += "#                             #                                  #";
@@ -32,7 +30,7 @@ Game::Game() {
     map += "#    #####################    #     #####    #    #    #    #    #";
     map += "#                             #              #    #    #    #    #";
     map += "##########################    ################    #    ######    #";
-    map += "#              #         #    #                   #    #         #";
+    map += "#              #         #    #  X                #    #         #";
     map += "#    #    #    #    #    #    #    ################    #####     #";
     map += "#    #    #    #    #    #    #    #              #              #";
     map += "#    #    #    #    #    #    #    #     ####################    #";
@@ -40,7 +38,7 @@ Game::Game() {
     map += "#    #    ################    #    #    ###########    #    #    #";
     map += "#    #                        #    #    #         #    #    #    #";
     map += "#    ##########################    #    #    #    #    #    #    #";
-    map += "#    #         #X             #    #    #    #    #    #    #    #";
+    map += "#    #         #              #    #    #    #    #    #    #    #";
     map += "#    #    #    ##########     #    #    ######    #    ######    #";
     map += "#         #                   #  ^ #              #              #";
     map += "##################################################################";
@@ -87,10 +85,10 @@ void Game::render3dScene(wchar_t* screen)
         double rayAngle = (player.getAngle() + player.getFOV() / 2.0) - (x / float(SCREEN_WIDTH)) * player.getFOV();
         Ray ray(rayAngle);
 
-        ray.castRay(player.getX(), player.getY(), MAP_WIDTH, MAP_HEIGHT, map);
+        ray.castRay(player.getX(), player.getY(), MAP_WIDTH, MAP_HEIGHT, map, objective);
         player.addRay(ray);
 
-        wchar_t wallTile = createWallTileByDistance(ray);
+        wchar_t wallTile = createWallTileByRay(ray);
 
         renderScreenByHeight(ray, screen, x, wallTile);
     }
@@ -116,18 +114,26 @@ void Game::renderScreenByHeight(Ray& ray, wchar_t* screen, int x, wchar_t wallTi
     }
 }
 
-wchar_t Game::createWallTileByDistance(Ray& ray)
+wchar_t Game::createWallTileByRay(Ray& ray)
 {
     wchar_t wallTile = ' ';
     
-    if (ray.getDistance() < 0.75)                               wallTile = 0x2593;  // Closest
-    else if (ray.getDistance() < ray.getMaxDepth() / 3.5)       wallTile = 0x2588;
-    else if (ray.getDistance() < ray.getMaxDepth() / 3.0)       wallTile = 0x2593;
-    else if (ray.getDistance() < ray.getMaxDepth() / 2.0)       wallTile = 0x2592;
-    else if (ray.getDistance() < ray.getMaxDepth())             wallTile = 0x2591;  // Farthest
-    else                                                        wallTile = ' ';
+    if (ray.getHitWall())
+    {
+        if (ray.getDistance() < 0.75)                           wallTile = 0x2593;  // Closest
+        else if (ray.getDistance() < ray.getMaxDepth() / 3.5)   wallTile = 0x2588;
+        else if (ray.getDistance() < ray.getMaxDepth() / 3.0)   wallTile = 0x2593;
+        else if (ray.getDistance() < ray.getMaxDepth() / 2.0)   wallTile = 0x2592;
+        else if (ray.getDistance() < ray.getMaxDepth())         wallTile = 0x2591;  // Farthest
+    }
+    else if (ray.getHitObjective())
+    {
+        if (ray.getDistance() < 1.0)                            wallTile = 0x2550;
+        else                                                    wallTile = 0x256C;
+    }
 
-    if (ray.getHitBoundary())                                   wallTile = ' ';
+    if (ray.getHitBoundary())                                   wallTile = ' ';    
+    if (ray.getDistance() >= ray.getMaxDepth())                 wallTile = ' ';
 
     return wallTile;
 }
@@ -218,7 +224,7 @@ void Game::findPathToObjective()
     int playerX = int(player.getX());
     int playerY = int(player.getY());
 
-    if (previousPlayerX != playerX || previousPlayerY != playerY)
+    if (previousPlayerX != playerX || previousPlayerY != playerY)   // Only find path if the player has moved
     {
         int objectiveX = int(objective.getX());
         int objectiveY = int(objective.getY());
@@ -258,6 +264,7 @@ void Game::render2dObjects(wchar_t* screen)
             }
         }
 
+        // Draw the path to the objective
         if (showPathToObjective)
         {
             for (std::pair<int, int>& point : pathToObjective)
