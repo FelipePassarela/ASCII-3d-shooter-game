@@ -26,7 +26,7 @@ std::vector<std::pair<int, int>> AStar::findPath(int startX, int startY, int end
 
     while (!openList.empty())
     {
-        NodePtr currentNode = chooseCurrentNode(openList);
+        NodePtr currentNode = openList.front();
 
         if (*currentNode == *endNode)
         {
@@ -41,6 +41,8 @@ std::vector<std::pair<int, int>> AStar::findPath(int startX, int startY, int end
         {
             evaluateNeighbour(neighbour, currentNode, endNode, openList, closedList);
         }
+
+        std::sort(openList.begin(), openList.end(), [](const NodePtr& a, const NodePtr& b) { return a->fCost < b->fCost; });
     }
 
     return {};
@@ -66,19 +68,6 @@ double AStar::Utils::heuristic(int startX, int startY, int endX, int endY)
 
     // Chebyshev distance
     // return std::max(std::abs(endX - startX), std::abs(endY - startY));
-}
-
-NodePtr AStar::Utils::chooseCurrentNode(AStar::NodeList& openList)
-{
-    NodePtr currentNode = openList[0];
-    for (auto& node : openList)
-    {
-        if (node->fCost < currentNode->fCost || (node->fCost == currentNode->fCost && node->hCost < currentNode->hCost))
-        {
-            currentNode = node;
-        }
-    }
-    return currentNode;
 }
 
 bool AStar::Utils::isNodeInList(const NodePtr node, const NodeList& list)

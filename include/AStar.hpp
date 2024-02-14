@@ -67,16 +67,6 @@ namespace AStar
         double heuristic(int startX, int startY, int endX, int endY);
 
         /**
-         * @brief Chooses the current node from the open list.
-         * 
-         * This function selects the node with the lowest cost from the open list and returns it.
-         * 
-         * @param openList The list of open nodes.
-         * @return A pointer to the chosen node.
-         */
-        NodePtr chooseCurrentNode(NodeList& openList);
-
-        /**
          * Checks if a given node is present in a list of nodes.
          *
          * @param node The node to check.
