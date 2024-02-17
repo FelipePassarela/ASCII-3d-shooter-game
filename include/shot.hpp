@@ -1,6 +1,6 @@
 /**
  * @file shot.hpp
- * @author your name (you@domain.com)
+ * @author Felipe Passarela (felipepassarela11@gmail.com)
  * @brief Shot struct header file.
  * @date 2024-02-17
  * 
