@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include "ray.hpp"
+#include "shot.hpp"
 #include "constants.hpp"
 
 /**
@@ -46,6 +47,7 @@ private:
     double speed = 5.0f;
     double rotationSpeed = speed * 0.75f;
     std::vector<Ray> rays;
+    std::vector<Shot> shots;    // The shots fired by the player.   
 
     /**
      * @brief Fix player's position floating point imprecision
@@ -106,6 +108,11 @@ public:
         return rays;
     }
 
+    std::vector<Shot> getShots() const
+    {
+        return shots;
+    }
+
     /* <------------------------ Setters ------------------------> */
 
     void setHealth(int newHealth)
@@ -155,6 +162,10 @@ public:
      * @param deltaTime The time elapsed since the last frame.
      */
     void moveBack(Direction direction, double deltaTime);
+
+    void shoot();
+
+    void updateShots(const std::string& map, int mapWidth, double deltaTime);
 
     /**
      * Checks if the player is at the specified position.

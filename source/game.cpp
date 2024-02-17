@@ -62,6 +62,8 @@ void Game::run()
 
         readInput();
 
+        player.updateShots(map, MAP_WIDTH, deltaTime);
+
         if (showPathToObjective)                                        findPathToObjective();
         if (player.isAtPosition(objective.getX(), objective.getY()))    objective.randomizePosition(MAP_WIDTH, MAP_HEIGHT, map);
 
@@ -111,6 +113,8 @@ void Game::renderScreenByHeight(Ray& ray, wchar_t* screen, int x, wchar_t wallTi
             else if (floorDistance < 0.75)      screen[y * SCREEN_WIDTH + x] = '.';
             else                                screen[y * SCREEN_WIDTH + x] = ' ';
         }
+
+        renderPlayerShots(screen, x, y);
     }
 }
 
@@ -184,7 +188,8 @@ void Game::readInput()
     }
     if (!wasMPressed && isMPressed)             showMap = !showMap;
     if (!wasPPressed && isPPressed && showMap)  showPathToObjective = !showPathToObjective; // Only show path if map is shown
-    if (GetAsyncKeyState(VK_SPACE) & 0x8000)    player.increaseFOV(deltaTime);
+    if (GetAsyncKeyState('Q') & 0x8000)         player.increaseFOV(deltaTime);
+    if (GetAsyncKeyState(VK_SPACE) & 0x8000)    player.shoot();
     if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)   running = false;
 
     wasMPressed = isMPressed;
@@ -211,6 +216,31 @@ void Game::movePlayer()
         map[playerY * MAP_WIDTH + playerX] == '#')
     {
         player.moveBack(direction, deltaTime);
+    }
+}
+
+void Game::renderPlayerShots(wchar_t* screen, int x, int y)
+{
+    for (Shot& shot : player.getShots())
+    {
+        const int MAX_SHOT_RADIUS = 15;
+        double shotDistance = sqrt(pow(shot.x - player.getX(), 2) + pow(shot.y - player.getY(), 2));
+        double shotRadius = MAX_SHOT_RADIUS * (1 - shotDistance / MAX_SHOT_RADIUS);
+        
+        int dx = SCREEN_WIDTH / 2 - x;
+        int dy = SCREEN_HEIGHT / 2 - y; 
+        double distanceFromCenter = sqrt(dx * dx + dy * dy);
+
+        if (distanceFromCenter <= shotRadius)
+        {
+            wchar_t tile = ' ';
+            if (shotDistance < 0.75)                           tile = 0x2593;  // Closest
+            else if (shotDistance < MAX_SHOT_RADIUS / 3.5)     tile = 0x2588;
+            else if (shotDistance < MAX_SHOT_RADIUS / 3.0)     tile = 0x2593;
+            else if (shotDistance < MAX_SHOT_RADIUS / 2.0)     tile = 0x2592;
+            else if (shotDistance < MAX_SHOT_RADIUS)           tile = 0x2591;  // Farthest
+            screen[y * SCREEN_WIDTH + x] = tile;
+        }
     }
 }
 
@@ -270,6 +300,12 @@ void Game::render2dObjects(wchar_t* screen)
                 int pathY = point.second;
                 screen[(pathY + yOffset) * SCREEN_WIDTH + pathX] = '.';
             }
+        }
+
+        // Draw the player's shoots.
+        for (Shot& shot : player.getShots())
+        {
+            screen[(int(shot.y) + yOffset) * SCREEN_WIDTH + int(shot.x)] = '*';
         }
 
         // Draw the objective and the player

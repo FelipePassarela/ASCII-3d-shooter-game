@@ -10,6 +10,7 @@
 #include "player.hpp"
 #include "constants.hpp"
 #include <cmath>
+#include <chrono>
 
 void Player::move(Direction direction, double deltaTime)
 {
@@ -46,6 +47,36 @@ void Player::moveBack(Direction direction, double deltaTime)
     else if (direction == Direction::DOWN)
     {
         this->move(Direction::UP, deltaTime);
+    }
+}
+
+void Player::shoot()
+{
+    static auto lastShotTime = std::chrono::high_resolution_clock::now();
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    double elapsedTime = std::chrono::duration<double>(currentTime - lastShotTime).count();
+
+    if (elapsedTime > 0.3)
+    {
+        Shot shot(x, y, angle);
+        shots.push_back(shot);
+        lastShotTime = currentTime;
+    }  
+}
+
+void Player::updateShots(const std::string& map, int mapWidth, double deltaTime)
+{
+    for (auto it = shots.begin(); it != shots.end();)
+    {
+        it->move(deltaTime);
+        if (map[int(it->y) * mapWidth + int(it->x)] == '#')
+        {
+            it = shots.erase(it); // erase returns the iterator to the next element
+        }
+        else
+        {
+            ++it; // Only increment if no erasure happened
+        }
     }
 }
 

@@ -82,6 +82,8 @@ private:
      */
     void render2dObjects(wchar_t* screen);
 
+    void renderPlayerShots(wchar_t* screen, int x, int y);
+
     /**
      * @brief Displays debug information on the screen.
      * 
