@@ -82,6 +82,13 @@ private:
      */
     void render2dObjects(wchar_t* screen);
 
+    /**
+     * Renders the player shots on the screen.
+     * 
+     * @param screen The screen buffer to render on.
+     * @param x The x-coordinate of the player's position.
+     * @param y The y-coordinate of the player's position.
+     */
     void renderPlayerShots(wchar_t* screen, int x, int y);
 
     /**

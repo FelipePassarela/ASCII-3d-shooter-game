@@ -304,7 +304,7 @@ void Game::render2dObjects(wchar_t* screen)
             }
         }
 
-        // Draw the player's shoots.
+        // Draw the player's shoots on map.
         for (Shot& shot : player.getShots())
         {
             screen[(int(shot.y) + yOffset) * SCREEN_WIDTH + int(shot.x)] = '*';

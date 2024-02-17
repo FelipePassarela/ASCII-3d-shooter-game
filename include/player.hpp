@@ -46,7 +46,7 @@ private:
     double FOV = initialFOV;
     double speed = 5.0f;
     double rotationSpeed = speed * 0.75f;
-    std::vector<Ray> rays;
+    std::vector<Ray> rays;      // The rays cast by the player.
     std::vector<Shot> shots;    // The shots fired by the player.   
 
     /**
@@ -163,8 +163,24 @@ public:
      */
     void moveBack(Direction direction, double deltaTime);
 
+    /**
+     * @brief Shoots a projectile.
+     * 
+     * This function is responsible for shooting a projectile from the player's position.
+     * The function calculates shoots according to the rate of fire.
+     */
     void shoot();
 
+    /**
+     * @brief Updates the shots fired by the player.
+     * 
+     * This function updates the positions of the shots fired by the player based on the current game map,
+     * the width of the map, and the time elapsed since the last update.
+     * 
+     * @param map The game map represented as a string.
+     * @param mapWidth The width of the game map.
+     * @param deltaTime The time elapsed since the last update.
+     */
     void updateShots(const std::string& map, int mapWidth, double deltaTime);
 
     /**
