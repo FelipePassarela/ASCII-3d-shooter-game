@@ -14,6 +14,8 @@
 #include <cmath>
 #include <random>
 
+// TODO: Reorganize in run function
+
 Game::Game() {
     map += "##################################################################";
     map += "#                             #                                  #";
@@ -53,6 +55,9 @@ void Game::run()
     SetConsoleActiveScreenBuffer(hConsole);
     DWORD dwBytesWritten = 0;
 
+    POINT lastMousePos;
+    GetCursorPos(&lastMousePos);
+
     auto previousTime = std::chrono::high_resolution_clock::now();
     while (running)
     {
@@ -60,12 +65,18 @@ void Game::run()
         deltaTime = std::chrono::duration<double, std::milli>(currentTime - previousTime).count() / 1000;
         previousTime = currentTime;
 
-        readInput();
+        POINT currentMousePos;
+        GetCursorPos(&currentMousePos);
+        int mouseDeltaX = currentMousePos.x - lastMousePos.x;   // TODO: Lock the mouse in the screen
+
+        readInput(mouseDeltaX);
 
         player.updateShots(map, MAP_WIDTH, deltaTime);
 
         if (showPathToObjective)                                        findPathToObjective();
         if (player.isAtPosition(objective.getX(), objective.getY()))    objective.randomizePosition(MAP_WIDTH, MAP_HEIGHT, map);
+
+        lastMousePos = currentMousePos;
 
         render3dScene(screen);
         render2dObjects(screen);
@@ -167,9 +178,9 @@ void Game::initialSetup()
     }
 }
 
-void Game::readInput()
+void Game::readInput(int mouseDeltaX)
 {
-    movePlayer();
+    movePlayer(mouseDeltaX);
 
     // This is necessary to toggle buttons
     static bool wasMPressed = false;
@@ -197,16 +208,17 @@ void Game::readInput()
     wasPPressed = isPPressed;
 }
 
-void Game::movePlayer()
+void Game::movePlayer(int mouseDeltaX)
 {
-    Direction direction = Direction::NONE;
+    double lastPlayerX = player.getX();
+    double lastPlayerY = player.getY();
 
-    if (GetAsyncKeyState('W') & 0x8000)     direction = Direction::UP;
-    if (GetAsyncKeyState('A') & 0x8000)     direction = Direction::LEFT;
-    if (GetAsyncKeyState('S') & 0x8000)     direction = Direction::DOWN;
-    if (GetAsyncKeyState('D') & 0x8000)     direction = Direction::RIGHT;
-
-    player.move(direction, deltaTime);
+    if (GetAsyncKeyState('W') & 0x8000)     player.move(Direction::UP, deltaTime);
+    if (GetAsyncKeyState('S') & 0x8000)     player.move(Direction::DOWN, deltaTime);
+    if (GetAsyncKeyState('A') & 0x8000)     player.move(Direction::LEFT, deltaTime);
+    if (GetAsyncKeyState('D') & 0x8000)     player.move(Direction::RIGHT, deltaTime);
+    if (mouseDeltaX < 0)                    player.rotate(Direction::LEFT, deltaTime);
+    if (mouseDeltaX > 0)                    player.rotate(Direction::RIGHT, deltaTime);
 
     int playerX = int(player.getX());
     int playerY = int(player.getY());
@@ -215,7 +227,8 @@ void Game::movePlayer()
         playerY <= 0 || playerY >= MAP_HEIGHT ||
         map[playerY * MAP_WIDTH + playerX] == '#')
     {
-        player.moveBack(direction, deltaTime);
+        player.setX(lastPlayerX);
+        player.setY(lastPlayerY);
     }
 }
 
