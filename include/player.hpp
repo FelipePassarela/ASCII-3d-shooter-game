@@ -167,7 +167,7 @@ public:
      * @brief Shoots a projectile.
      * 
      * This function is responsible for shooting a projectile from the player's position.
-     * The function calculates shoots according to the rate of fire.
+     * The function shoots according to the rate of fire.
      */
     void shoot();
 
