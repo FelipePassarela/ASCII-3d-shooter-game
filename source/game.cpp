@@ -223,12 +223,12 @@ void Game::renderPlayerShots(wchar_t* screen, int x, int y)
 {
     for (Shot& shot : player.getShots())
     {
-        const int MAX_RADIUS = 10;
-        double shotDistance = sqrt(pow(shot.x - player.getX(), 2) + pow(shot.y - player.getY(), 2)) + 1;
+        const int MAX_RADIUS = 20;
+        double shotDistance = sqrt(pow(shot.x - player.getX(), 2) + pow(shot.y - player.getY(), 2)) + 1; // Add 1 to avoid division by zero and radius be > MAX_RADIUS
         double shotRadius = MAX_RADIUS / shotDistance;
 
         double shotScreenY = (SCREEN_HEIGHT / 2) + (shotRadius / MAX_RADIUS) * (SCREEN_HEIGHT / 2);
-        double shotScreenX = SCREEN_WIDTH / 2;
+        double shotScreenX = (SCREEN_WIDTH / 2) + (shotRadius / MAX_RADIUS) * (SCREEN_WIDTH / 2);
 
         int dx = x - shotScreenX;
         int dy = (y - shotScreenY) * 2;   // Multiply by 2 to make the shot more round
