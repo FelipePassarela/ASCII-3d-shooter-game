@@ -224,14 +224,14 @@ void Game::renderPlayerShots(wchar_t* screen, int x, int y)
     for (Shot& shot : player.getShots())
     {
         const int MAX_RADIUS = 20;
-        double shotDistance = sqrt(pow(shot.x - player.getX(), 2) + pow(shot.y - player.getY(), 2)) + 1; // Add 1 to avoid division by zero and radius be > MAX_RADIUS
+        double shotDistance = sqrt(pow(shot.x - player.getX(), 2) + pow(shot.y - player.getY(), 2));
         double shotRadius = MAX_RADIUS / shotDistance;
 
-        double shotScreenY = (SCREEN_HEIGHT / 2) + (shotRadius / MAX_RADIUS) * (SCREEN_HEIGHT / 2);
-        double shotScreenX = (SCREEN_WIDTH / 2) + (shotRadius / MAX_RADIUS) * (SCREEN_WIDTH / 2);
+        double shotScreenY = (SCREEN_HEIGHT / 2) + (shotRadius / MAX_RADIUS) * (SCREEN_HEIGHT / 2) - 1;
+        double shotScreenX = (SCREEN_WIDTH / 2) + (shotRadius / MAX_RADIUS) * (SCREEN_WIDTH / 2) - 1;
 
-        int dx = x - shotScreenX;
-        int dy = (y - shotScreenY) * 2;   // Multiply by 2 to make the shot more round
+        double dx = x - shotScreenX;
+        double dy = (y - shotScreenY) * 2.0;   // Multiply by 2 to make the shot more round
         double distanceFromShot = sqrt(dx * dx + dy * dy);
 
         if (distanceFromShot <= shotRadius)
@@ -240,7 +240,7 @@ void Game::renderPlayerShots(wchar_t* screen, int x, int y)
             if (shotDistance < MAX_RADIUS / 4.0)          tile = 0x2588;  // Closest
             else if (shotDistance < MAX_RADIUS / 3.0)     tile = 0x2593;
             else if (shotDistance < MAX_RADIUS / 1.5)     tile = 0x2592;
-            else if (shotDistance < MAX_RADIUS)           tile = 0x2591;  // Farthest
+            else if (shotDistance <= MAX_RADIUS)          tile = 0x2591;  // Farthest
             screen[y * SCREEN_WIDTH + x] = tile;
         }
     }
@@ -314,6 +314,8 @@ void Game::render2dObjects(wchar_t* screen)
         screen[int((objective.getY()) + yOffset) * SCREEN_WIDTH + int(objective.getX())] = objective.getTile();
         screen[(int(player.getY()) + yOffset) * SCREEN_WIDTH + int(player.getX())] = player.getTile();
     }
+
+    screen[(SCREEN_HEIGHT / 2) * SCREEN_WIDTH + SCREEN_WIDTH / 2] = '+';
 }
 
 void Game::showDebugInfo(wchar_t* screen, size_t& yOffset)
