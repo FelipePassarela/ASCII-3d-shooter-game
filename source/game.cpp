@@ -223,21 +223,23 @@ void Game::renderPlayerShots(wchar_t* screen, int x, int y)
 {
     for (Shot& shot : player.getShots())
     {
-        const int MAX_SHOT_RADIUS = 15;
+        const int MAX_SHOT_RADIUS = 20;
         double shotDistance = sqrt(pow(shot.x - player.getX(), 2) + pow(shot.y - player.getY(), 2));
-        double shotRadius = MAX_SHOT_RADIUS * (1 - shotDistance / MAX_SHOT_RADIUS);
-        
+        double shotRadius = MAX_SHOT_RADIUS / shotDistance;
+
+        if (shotRadius > MAX_SHOT_RADIUS) continue;
+
         int dx = SCREEN_WIDTH / 2 - x;
-        int dy = SCREEN_HEIGHT / 2 - y; 
+        int dy = (SCREEN_HEIGHT / 2 - y) * 2;   // Multiply by 2 to make the shots look more circular 
         double distanceFromCenter = sqrt(dx * dx + dy * dy);
 
         if (distanceFromCenter <= shotRadius)
         {
             wchar_t tile = ' ';
             if (shotDistance < 0.75)                           tile = 0x2593;  // Closest
-            else if (shotDistance < MAX_SHOT_RADIUS / 3.5)     tile = 0x2588;
+            else if (shotDistance < MAX_SHOT_RADIUS / 5.0)     tile = 0x2588;
             else if (shotDistance < MAX_SHOT_RADIUS / 3.0)     tile = 0x2593;
-            else if (shotDistance < MAX_SHOT_RADIUS / 2.0)     tile = 0x2592;
+            else if (shotDistance < MAX_SHOT_RADIUS / 1.5)     tile = 0x2592;
             else if (shotDistance < MAX_SHOT_RADIUS)           tile = 0x2591;  // Farthest
             screen[y * SCREEN_WIDTH + x] = tile;
         }
