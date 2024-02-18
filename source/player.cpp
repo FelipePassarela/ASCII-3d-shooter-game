@@ -68,7 +68,8 @@ void Player::shoot()
 
     if (elapsedTime > 0.3)
     {
-        Shot shot(x, y, angle);
+        double shotAngle = angle + (rand() % 100 - 50) / 1000.0; // Add a random angle between -0.05 and 0.05 radians to the shot
+        Shot shot(x, y, shotAngle, speed + 4.0);
         shots.push_back(shot);
         lastShotTime = currentTime;
     }  

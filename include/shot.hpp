@@ -17,14 +17,15 @@ struct Shot // Represents a shot fired by the player.
     double x;
     double y;
     double angle;
+    double speed;
 
-    Shot(double x, double y, double angle) : x(x), y(y), angle(angle) {}
+    Shot(double x, double y, double angle, double speed) : x(x), y(y), angle(angle), speed(speed) {}
 
     // Moves the shot in the direction it was fired. 
     void move(double deltaTime) 
     {
-        x += cos(angle) * 40 * deltaTime;
-        y -= sin(angle) * 40 * deltaTime;
+        x += cos(angle) * speed * deltaTime;
+        y -= sin(angle) * speed * deltaTime;
     }
 };
 
