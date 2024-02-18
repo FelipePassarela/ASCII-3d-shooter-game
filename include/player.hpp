@@ -45,7 +45,7 @@ private:
     double initialFOV = PI / 3.5;
     double FOV = initialFOV;
     double speed = 4.0f;
-    double rotationSpeed = speed;
+    double rotationSpeed = speed * 1.5;
     std::vector<Ray> rays;      // The rays cast by the player.
     std::vector<Shot> shots;    // The shots fired by the player.   
 

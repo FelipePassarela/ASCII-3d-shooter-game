@@ -253,14 +253,20 @@ void Game::movePlayer(int mouseDeltaX)
 
 void Game::renderPlayerShots(wchar_t* screen, int x, int y)
 {
+    // TODO: Render the shots position relative to the player's position
+    // TODO: Make parabolic shots
     for (Shot& shot : player.getShots())
     {
-        const int MAX_RADIUS = 20;
+        const int MAX_RADIUS = 15;
         double shotDistance = sqrt(pow(shot.x - player.getX(), 2) + pow(shot.y - player.getY(), 2));
-        double shotRadius = MAX_RADIUS / (shotDistance * shotDistance);
+        double shotRadius = MAX_RADIUS / (shotDistance + 1);
 
-        double shotScreenY = (SCREEN_HEIGHT / 2) + (shotRadius / MAX_RADIUS) * (SCREEN_HEIGHT / 2);
-        double shotScreenX = (SCREEN_WIDTH / 2) + (shotRadius / MAX_RADIUS) * (SCREEN_WIDTH / 2);
+        double shotScreenY = (SCREEN_HEIGHT) - (1 - shotRadius / MAX_RADIUS) * (SCREEN_HEIGHT / 2) - 1;
+        double shotScreenX = (SCREEN_WIDTH) - (1 - shotRadius / MAX_RADIUS) * (SCREEN_WIDTH / 2) - 1;
+        #ifdef DEBUG
+        screen[int(shotScreenY) * SCREEN_WIDTH ] = '>';
+        screen[int(shotScreenX)] = 'v';
+        #endif
 
         double dx = x - shotScreenX;
         double dy = (y - shotScreenY) * 2.0;   // Multiply by 2 to make the shot more round
