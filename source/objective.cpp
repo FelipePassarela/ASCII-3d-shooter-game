@@ -35,8 +35,8 @@ void Objective::randomizeWallTile(wchar_t& wallTile, double rayDistance)
     std::random_device rd;
     std::mt19937 gen(rd());
 
-    std::uniform_int_distribution<> dis(0x0530, 0x058F); // Unicode range for Armenian characters
-    std::uniform_int_distribution<> dis2(1, int(rayDistance) * 40 + 10); 
+    std::uniform_int_distribution<> dis(0x1200, 0x137F); // Unicode range for ethiopic scripts
+    std::uniform_int_distribution<> dis2(1, int(rayDistance * rayDistance * rayDistance) + 10); 
 
     int random = dis2(gen);
 

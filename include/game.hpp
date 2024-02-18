@@ -51,19 +51,35 @@ private:
     void initialSetup();
 
     /**
+     * Calculates the change in the X-coordinate of the mouse pointer.
+     * 
+     * @param currentMousePos The current position of the mouse pointer.
+     * @param mouseDeltaX The variable to store the calculated change in the X-coordinate.
+     * @param lastMousePos The last position of the mouse pointer.
+     */
+    void calcMouseDeltaX(POINT& currentMousePos, int& mouseDeltaX, POINT& lastMousePos);
+
+    /**
+     * @brief Resets the position of the mouse.
+     */
+    void resetMousePos();
+
+    /**
      * @brief Reads the user input.
      * 
-     * This function is responsible for reading the user input and updating the game state.
+     * @param mouseDeltaX The change in the x-coordinate of the mouse. 
      */
-    void readInput();
+    void readInput(int mouseDeltaX);
 
     /**
      * @brief Moves the player in the game.
      * 
      * This function is responsible for moving the player character in the game.
      * It updates the player's position based on user input.
+     * 
+     * @param mouseDeltaX The change in the x-coordinate of the mouse.
      */
-    void movePlayer();
+    void movePlayer(int mouseDeltaX);
 
     /**
      * @brief Finds the path to the objective.

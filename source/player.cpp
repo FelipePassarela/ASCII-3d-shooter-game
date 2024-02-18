@@ -14,11 +14,22 @@
 
 void Player::move(Direction direction, double deltaTime)
 {
-    double correctedRotationSpeed = rotationSpeed * deltaTime;
     double correctedSpeed = speed * deltaTime;
+    if (direction == Direction::LEFT || direction == Direction::RIGHT)
+    {
+        correctedSpeed /= 1.5;  // There are spaces between the columns in console, so it's necessary to reduce the speed in x-axis
+    }
 
-    if (direction == Direction::LEFT)           angle += correctedRotationSpeed;
-    else if (direction == Direction::RIGHT)     angle -= correctedRotationSpeed;
+    if (direction == Direction::LEFT)
+    {
+        x = x - correctedSpeed * sinf(angle);
+        y = y - correctedSpeed * cosf(angle);
+    }
+    else if (direction == Direction::RIGHT)
+    {
+        x = x + correctedSpeed * sinf(angle);
+        y = y + correctedSpeed * cosf(angle);
+    }
     else if (direction == Direction::UP)
     {
         x = x + correctedSpeed * cosf(angle);           // Formula: X = X0 + t * Dx. Source: https://en.wikipedia.org/wiki/Ray_casting                                           
@@ -33,21 +44,20 @@ void Player::move(Direction direction, double deltaTime)
     if (angle > 2 * PI)         angle -= 2 * PI;
     else if (angle < 0)         angle += 2 * PI;
 
-    updateTile();
-
     if (direction != Direction::NONE)   fixFloatingPointImprecision();  // Necessary when player starts in (1, 1)
 }
 
-void Player::moveBack(Direction direction, double deltaTime)
+void Player::rotate(Direction direction, double deltaTime)
 {
-    if (direction == Direction::UP)
-    {
-        this->move(Direction::DOWN, deltaTime);
-    }
-    else if (direction == Direction::DOWN)
-    {
-        this->move(Direction::UP, deltaTime);
-    }
+    double correctedRotationSpeed = rotationSpeed * deltaTime;
+
+    if (direction == Direction::LEFT)           angle += correctedRotationSpeed;
+    else if (direction == Direction::RIGHT)     angle -= correctedRotationSpeed;
+
+    if (angle > 2 * PI)         angle -= 2 * PI;
+    else if (angle < 0)         angle += 2 * PI;
+
+    updateTile();
 }
 
 void Player::shoot()

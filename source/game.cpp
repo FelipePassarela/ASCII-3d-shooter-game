@@ -14,6 +14,8 @@
 #include <cmath>
 #include <random>
 
+// TODO: Reorganize run function. Maybe move screen buffer and hConsole to main.cpp
+
 Game::Game() {
     map += "##################################################################";
     map += "#                             #                                  #";
@@ -53,6 +55,9 @@ void Game::run()
     SetConsoleActiveScreenBuffer(hConsole);
     DWORD dwBytesWritten = 0;
 
+    POINT lastMousePos;
+    GetCursorPos(&lastMousePos);
+
     auto previousTime = std::chrono::high_resolution_clock::now();
     while (running)
     {
@@ -60,12 +65,19 @@ void Game::run()
         deltaTime = std::chrono::duration<double, std::milli>(currentTime - previousTime).count() / 1000;
         previousTime = currentTime;
 
-        readInput();
+        int mouseDeltaX = 0;
+        POINT currentMousePos;
+        calcMouseDeltaX(currentMousePos, mouseDeltaX, lastMousePos);
+
+        resetMousePos();
+
+        readInput(mouseDeltaX);
 
         player.updateShots(map, MAP_WIDTH, deltaTime);
 
         if (showPathToObjective)                                        findPathToObjective();
         if (player.isAtPosition(objective.getX(), objective.getY()))    objective.randomizePosition(MAP_WIDTH, MAP_HEIGHT, map);
+
 
         render3dScene(screen);
         render2dObjects(screen);
@@ -76,6 +88,24 @@ void Game::run()
 
     delete[] screen;
     CloseHandle(hConsole);
+}
+
+void Game::calcMouseDeltaX(POINT& currentMousePos, int& mouseDeltaX, POINT& lastMousePos)
+{
+    GetCursorPos(&currentMousePos);
+    mouseDeltaX = currentMousePos.x - lastMousePos.x;
+    lastMousePos = currentMousePos;
+}
+
+void Game::resetMousePos()
+{
+    // TODO: Reset the mouse position to the center of the console window.
+    POINT p;
+    GetCursorPos(&p);
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+    if (p.x < screenWidth / 2 - 300 || p.x > screenWidth / 2 + 300)
+        SetCursorPos(screenWidth / 2, screenHeight / 2);
 }
 
 void Game::render3dScene(wchar_t* screen)
@@ -167,9 +197,9 @@ void Game::initialSetup()
     }
 }
 
-void Game::readInput()
+void Game::readInput(int mouseDeltaX)
 {
-    movePlayer();
+    movePlayer(mouseDeltaX);
 
     // This is necessary to toggle buttons
     static bool wasMPressed = false;
@@ -197,16 +227,17 @@ void Game::readInput()
     wasPPressed = isPPressed;
 }
 
-void Game::movePlayer()
+void Game::movePlayer(int mouseDeltaX)
 {
-    Direction direction = Direction::NONE;
+    double lastPlayerX = player.getX();
+    double lastPlayerY = player.getY();
 
-    if (GetAsyncKeyState('W') & 0x8000)     direction = Direction::UP;
-    if (GetAsyncKeyState('A') & 0x8000)     direction = Direction::LEFT;
-    if (GetAsyncKeyState('S') & 0x8000)     direction = Direction::DOWN;
-    if (GetAsyncKeyState('D') & 0x8000)     direction = Direction::RIGHT;
-
-    player.move(direction, deltaTime);
+    if (GetAsyncKeyState('W') & 0x8000)     player.move(Direction::UP, deltaTime);
+    if (GetAsyncKeyState('S') & 0x8000)     player.move(Direction::DOWN, deltaTime);
+    if (GetAsyncKeyState('A') & 0x8000)     player.move(Direction::LEFT, deltaTime);
+    if (GetAsyncKeyState('D') & 0x8000)     player.move(Direction::RIGHT, deltaTime);
+    if (mouseDeltaX < 0)                    player.rotate(Direction::LEFT, deltaTime);
+    if (mouseDeltaX > 0)                    player.rotate(Direction::RIGHT, deltaTime);
 
     int playerX = int(player.getX());
     int playerY = int(player.getY());
@@ -215,7 +246,8 @@ void Game::movePlayer()
         playerY <= 0 || playerY >= MAP_HEIGHT ||
         map[playerY * MAP_WIDTH + playerX] == '#')
     {
-        player.moveBack(direction, deltaTime);
+        player.setX(lastPlayerX);
+        player.setY(lastPlayerY);
     }
 }
 
@@ -225,10 +257,10 @@ void Game::renderPlayerShots(wchar_t* screen, int x, int y)
     {
         const int MAX_RADIUS = 20;
         double shotDistance = sqrt(pow(shot.x - player.getX(), 2) + pow(shot.y - player.getY(), 2));
-        double shotRadius = MAX_RADIUS / shotDistance;
+        double shotRadius = MAX_RADIUS / (shotDistance * shotDistance);
 
-        double shotScreenY = (SCREEN_HEIGHT / 2) + (shotRadius / MAX_RADIUS) * (SCREEN_HEIGHT / 2) - 1;
-        double shotScreenX = (SCREEN_WIDTH / 2) + (shotRadius / MAX_RADIUS) * (SCREEN_WIDTH / 2) - 1;
+        double shotScreenY = (SCREEN_HEIGHT / 2) + (shotRadius / MAX_RADIUS) * (SCREEN_HEIGHT / 2);
+        double shotScreenX = (SCREEN_WIDTH / 2) + (shotRadius / MAX_RADIUS) * (SCREEN_WIDTH / 2);
 
         double dx = x - shotScreenX;
         double dy = (y - shotScreenY) * 2.0;   // Multiply by 2 to make the shot more round
@@ -237,9 +269,9 @@ void Game::renderPlayerShots(wchar_t* screen, int x, int y)
         if (distanceFromShot <= shotRadius)
         {
             wchar_t tile = L' ';
-            if (shotDistance < MAX_RADIUS / 4.0)          tile = 0x2588;  // Closest
-            else if (shotDistance < MAX_RADIUS / 3.0)     tile = 0x2593;
-            else if (shotDistance < MAX_RADIUS / 1.5)     tile = 0x2592;
+            if (shotDistance < MAX_RADIUS / 4.4)          tile = 0x2588;  // Closest
+            else if (shotDistance < MAX_RADIUS / 3.7)     tile = 0x2593;
+            else if (shotDistance < MAX_RADIUS / 2.5)     tile = 0x2592;
             else if (shotDistance <= MAX_RADIUS)          tile = 0x2591;  // Farthest
             screen[y * SCREEN_WIDTH + x] = tile;
         }

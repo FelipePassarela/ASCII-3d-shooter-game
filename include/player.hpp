@@ -44,8 +44,8 @@ private:
     double angle = 0.0f;
     double initialFOV = PI / 3.5;
     double FOV = initialFOV;
-    double speed = 5.0f;
-    double rotationSpeed = speed * 0.75f;
+    double speed = 4.0f;
+    double rotationSpeed = speed;
     std::vector<Ray> rays;      // The rays cast by the player.
     std::vector<Shot> shots;    // The shots fired by the player.   
 
@@ -156,12 +156,12 @@ public:
     void move(Direction direction, double deltaTime);
 
     /**
-     * Moves the player backwards in the specified direction.
+     * Rotates the player in the specified direction.
      * 
-     * @param direction The direction in which the player should move.
+     * @param direction The direction to rotate the player.
      * @param deltaTime The time elapsed since the last frame.
      */
-    void moveBack(Direction direction, double deltaTime);
+    void rotate(Direction direction, double deltaTime);
 
     /**
      * @brief Shoots a projectile.
