@@ -51,6 +51,20 @@ private:
     void initialSetup();
 
     /**
+     * Calculates the change in the X-coordinate of the mouse pointer.
+     * 
+     * @param currentMousePos The current position of the mouse pointer.
+     * @param mouseDeltaX The variable to store the calculated change in the X-coordinate.
+     * @param lastMousePos The last position of the mouse pointer.
+     */
+    void calcMouseDeltaX(POINT& currentMousePos, int& mouseDeltaX, POINT& lastMousePos);
+
+    /**
+     * @brief Resets the position of the mouse.
+     */
+    void resetMousePos();
+
+    /**
      * @brief Reads the user input.
      * 
      * @param mouseDeltaX The change in the x-coordinate of the mouse. 
