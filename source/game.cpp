@@ -254,15 +254,18 @@ void Game::movePlayer(int mouseDeltaX)
 void Game::renderPlayerShots(wchar_t* screen, int x, int y)
 {
     // TODO: Render the shots position relative to the player's position
-    // TODO: Make parabolic shots
-    for (Shot& shot : player.getShots())
+    // TODO: Make the shots shine
+    for (Shot& shot : player.getShots()) 
     {
         const int MAX_RADIUS = 15;
         double shotDistance = sqrt(pow(shot.x - player.getX(), 2) + pow(shot.y - player.getY(), 2));
         double shotRadius = MAX_RADIUS / (shotDistance + 1);
 
-        double shotScreenY = (SCREEN_HEIGHT) - (1 - shotRadius / MAX_RADIUS) * (SCREEN_HEIGHT / 2) - 1;
-        double shotScreenX = (SCREEN_WIDTH) - (1 - shotRadius / MAX_RADIUS) * (SCREEN_WIDTH / 2) - 1;
+        const double MAX_RENDER_DIST = 16.0;
+        if (shotDistance > MAX_RENDER_DIST) continue;
+
+        double shotScreenY = SCREEN_HEIGHT - (1 - shotRadius / MAX_RADIUS) * (SCREEN_HEIGHT / 2) - 1;
+        double shotScreenX = SCREEN_WIDTH - (1 - shotRadius / MAX_RADIUS) * (SCREEN_WIDTH / 2) - 1;
         #ifdef DEBUG
         screen[int(shotScreenY) * SCREEN_WIDTH ] = '>';
         screen[int(shotScreenX)] = 'v';
@@ -275,10 +278,10 @@ void Game::renderPlayerShots(wchar_t* screen, int x, int y)
         if (distanceFromShot <= shotRadius)
         {
             wchar_t tile = L' ';
-            if (shotDistance < MAX_RADIUS / 4.4)          tile = 0x2588;  // Closest
-            else if (shotDistance < MAX_RADIUS / 3.7)     tile = 0x2593;
-            else if (shotDistance < MAX_RADIUS / 2.5)     tile = 0x2592;
-            else if (shotDistance <= MAX_RADIUS)          tile = 0x2591;  // Farthest
+            if (shotDistance < MAX_RENDER_DIST / 3.5)          tile = 0x2588;  // Closest
+            else if (shotDistance < MAX_RENDER_DIST / 3.0)     tile = 0x2593;
+            else if (shotDistance < MAX_RENDER_DIST / 2.0)     tile = 0x2592;
+            else if (shotDistance <= MAX_RENDER_DIST)          tile = 0x2591;  // Farthest
             screen[y * SCREEN_WIDTH + x] = tile;
         }
     }
