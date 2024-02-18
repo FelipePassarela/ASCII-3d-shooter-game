@@ -78,7 +78,6 @@ void Game::run()
         if (showPathToObjective)                                        findPathToObjective();
         if (player.isAtPosition(objective.getX(), objective.getY()))    objective.randomizePosition(MAP_WIDTH, MAP_HEIGHT, map);
 
-
         render3dScene(screen);
         render2dObjects(screen);
 
@@ -258,17 +257,25 @@ void Game::renderPlayerShots(wchar_t* screen, int x, int y)
     for (Shot& shot : player.getShots()) 
     {
         const int MAX_RADIUS = 15;
+        const double MAX_RENDER_DIST = 16.0;
         double shotDistance = sqrt(pow(shot.x - player.getX(), 2) + pow(shot.y - player.getY(), 2));
         double shotRadius = MAX_RADIUS / (shotDistance + 1);
+        double angleDiff = player.getAngle() - shot.angle;
 
-        const double MAX_RENDER_DIST = 16.0;
-        if (shotDistance > MAX_RENDER_DIST) continue;
+        if (shotDistance > MAX_RENDER_DIST || abs(angleDiff) > player.getFOV() / 2) continue;
 
-        double shotScreenY = SCREEN_HEIGHT - (1 - shotRadius / MAX_RADIUS) * (SCREEN_HEIGHT / 2) - 1;
-        double shotScreenX = SCREEN_WIDTH - (1 - shotRadius / MAX_RADIUS) * (SCREEN_WIDTH / 2) - 1;
+        // Calculation of the shot position on the screen
+        double radiusFactor = 1 - shotRadius / MAX_RADIUS;                              //< The bigger the radius, the higher the shot should be on the screen.
+        double horizontalPerspectiveFactor = 1 - angleDiff / (player.getFOV() / 2);     //< When shooting in wide angles, the shot should be more to the side.
+
+        double shotScreenY = SCREEN_HEIGHT - radiusFactor * (SCREEN_HEIGHT / 2);
+        double shotScreenX = SCREEN_WIDTH - radiusFactor * (SCREEN_WIDTH / 2) * horizontalPerspectiveFactor;
+        
         #ifdef DEBUG
-        screen[int(shotScreenY) * SCREEN_WIDTH ] = '>';
-        screen[int(shotScreenX)] = 'v';
+        if (shotScreenX - 1 < 0 || shotScreenX - 1 >= SCREEN_WIDTH || shotScreenY - 1 < 0 || shotScreenY - 1 >= SCREEN_HEIGHT)
+            throw std::runtime_error("Shot out of screen bounds");
+        screen[int(shotScreenY - 1) * SCREEN_WIDTH ] = '>';
+        screen[int(shotScreenX - 1)] = 'v';
         #endif
 
         double dx = x - shotScreenX;
