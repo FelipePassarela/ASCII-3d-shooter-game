@@ -250,6 +250,14 @@ void Game::movePlayer(int mouseDeltaX)
     }
 }
 
+double Game::angleBetweenVectors(double x1, double y1, double x2, double y2)
+{
+    double dotProduct = x1 * x2 + y1 * y2;
+    double magnitude1 = sqrt(x1 * x1 + y1 * y1);
+    double magnitude2 = sqrt(x2 * x2 + y2 * y2);
+    return acos(dotProduct / (magnitude1 * magnitude2));
+}
+
 void Game::renderPlayerShots(wchar_t* screen, int x, int y)
 {
     // TODO: Render the shots position relative to the player's position
@@ -269,7 +277,7 @@ void Game::renderPlayerShots(wchar_t* screen, int x, int y)
         double horizontalPerspectiveFactor = 1 - angleDiff / (player.getFOV() / 2);     //< When shooting in wide angles, the shot should be more to the side.
 
         double shotScreenY = SCREEN_HEIGHT - radiusFactor * (SCREEN_HEIGHT / 2);
-        double shotScreenX = SCREEN_WIDTH - radiusFactor * (SCREEN_WIDTH / 2) * horizontalPerspectiveFactor;
+        double shotScreenX = SCREEN_WIDTH - radiusFactor * horizontalPerspectiveFactor * (SCREEN_WIDTH / 2) ;
         
         #ifdef DEBUG
         if (shotScreenX - 1 < 0 || shotScreenX - 1 >= SCREEN_WIDTH || shotScreenY - 1 < 0 || shotScreenY - 1 >= SCREEN_HEIGHT)

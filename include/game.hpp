@@ -82,6 +82,17 @@ private:
     void movePlayer(int mouseDeltaX);
 
     /**
+     * Calculates the angle between two vectors.
+     *
+     * @param x1 The x-coordinate of the first vector.
+     * @param y1 The y-coordinate of the first vector.
+     * @param x2 The x-coordinate of the second vector.
+     * @param y2 The y-coordinate of the second vector.
+     * @return The angle between the two vectors in radians.
+     */
+    double angleBetweenVectors(double x1, double y1, double x2, double y2);
+
+    /**
      * @brief Finds the path to the objective.
      * 
      * This function calculates the path from the current position to the objective.
