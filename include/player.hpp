@@ -41,7 +41,7 @@ private:
     double x = 1;
     double y = 1;
     char tile = '>';
-    double angle = 0.0f;       // The angle of the player's view in radians.
+    double angle = 0.0f;        // The angle of the player's view in radians.
     double initialFOV = PI / 3.5;
     double FOV = initialFOV;
     double speed = 4.0f;
