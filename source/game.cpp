@@ -269,7 +269,7 @@ void Game::renderPlayerShots(wchar_t* screen, int x, int y)
         #ifdef DEBUG
         if (shotScreenX > 0 && shotScreenX < SCREEN_WIDTH && shotScreenY > 0 && shotScreenY < SCREEN_HEIGHT)
         {
-            screen[int(shotScreenY) * SCREEN_WIDTH ] = '>';
+            screen[int(shotScreenY) * SCREEN_WIDTH] = '>';
             screen[int(shotScreenX)] = 'v';
         }
         #endif
