@@ -267,10 +267,11 @@ void Game::renderPlayerShots(wchar_t* screen, int x, int y)
         double shotScreenX = SCREEN_WIDTH - radiusFactor * horizontalPerspectiveFactor * (SCREEN_WIDTH / 2) ;
         
         #ifdef DEBUG
-        if (shotScreenX - 1 < 0 || shotScreenX - 1 >= SCREEN_WIDTH || shotScreenY - 1 < 0 || shotScreenY - 1 >= SCREEN_HEIGHT)
-            throw std::runtime_error("Shot out of screen bounds");
-        screen[int(shotScreenY - 1) * SCREEN_WIDTH ] = '>';
-        screen[int(shotScreenX - 1)] = 'v';
+        if (shotScreenX > 0 && shotScreenX < SCREEN_WIDTH && shotScreenY > 0 && shotScreenY < SCREEN_HEIGHT)
+        {
+            screen[int(shotScreenY) * SCREEN_WIDTH ] = '>';
+            screen[int(shotScreenX)] = 'v';
+        }
         #endif
 
         double dx = x - shotScreenX;
