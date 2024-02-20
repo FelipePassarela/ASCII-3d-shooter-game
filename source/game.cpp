@@ -249,6 +249,7 @@ void Game::movePlayer(int mouseDeltaX)
 
 void Game::renderPlayerShots(wchar_t* screen, int x, int y, double rayDistance)
 {
+    // TODO: Refactor this function to use linear algebra to calculate the shot position on the screen
     // TODO: Make the shots shine
     for (Shot& shot : player.getShots()) 
     {
