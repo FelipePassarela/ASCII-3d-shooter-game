@@ -109,16 +109,12 @@ void Game::resetMousePos()
 
 void Game::render3dScene(wchar_t* screen)
 {
-    player.clearRays();
-
     for (int x = 0; x < SCREEN_WIDTH; x++)
     {
         double rayAngle = (player.getAngle() + player.getFOV() / 2.0) - (x / float(SCREEN_WIDTH)) * player.getFOV();
         Ray ray(rayAngle);
 
         ray.castRay(player.getX(), player.getY(), MAP_WIDTH, MAP_HEIGHT, map, objective);
-        player.addRay(ray);
-
         wchar_t wallTile = createWallTileByRay(ray);
 
         renderScreenByHeight(ray, screen, x, wallTile);
@@ -250,17 +246,8 @@ void Game::movePlayer(int mouseDeltaX)
     }
 }
 
-double Game::angleBetweenVectors(double x1, double y1, double x2, double y2)
-{
-    double dotProduct = x1 * x2 + y1 * y2;
-    double magnitude1 = sqrt(x1 * x1 + y1 * y1);
-    double magnitude2 = sqrt(x2 * x2 + y2 * y2);
-    return acos(dotProduct / (magnitude1 * magnitude2));
-}
-
 void Game::renderPlayerShots(wchar_t* screen, int x, int y)
 {
-    // TODO: Render the shots position relative to the player's position
     // TODO: Make the shots shine
     for (Shot& shot : player.getShots()) 
     {
@@ -335,17 +322,6 @@ void Game::render2dObjects(wchar_t* screen)
             for (int j = 0; j < MAP_WIDTH; ++j)
             {
                 screen[(i + yOffset) * SCREEN_WIDTH + j] = map[i * MAP_WIDTH + j];
-            }
-        }
-
-        // Draw the player's rays
-        for (Ray ray : player.getRays())
-        {
-            for (std::pair<int, int>& point : ray.getPoints())
-            {
-                int rayX = point.first;
-                int rayY = point.second;
-                screen[(rayY + yOffset) * SCREEN_WIDTH + rayX] = '-';
             }
         }
 
