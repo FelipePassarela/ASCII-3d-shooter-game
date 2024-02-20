@@ -139,7 +139,7 @@ void Game::renderScreenByHeight(Ray& ray, wchar_t* screen, int x, wchar_t wallTi
             else                                screen[y * SCREEN_WIDTH + x] = ' ';
         }
 
-        renderPlayerShots(screen, x, y);
+        renderPlayerShots(screen, x, y, ray.getDistance());
     }
 }
 
@@ -246,7 +246,7 @@ void Game::movePlayer(int mouseDeltaX)
     }
 }
 
-void Game::renderPlayerShots(wchar_t* screen, int x, int y)
+void Game::renderPlayerShots(wchar_t* screen, int x, int y, double rayDistance)
 {
     // TODO: Make the shots shine
     for (Shot& shot : player.getShots()) 
@@ -257,7 +257,7 @@ void Game::renderPlayerShots(wchar_t* screen, int x, int y)
         double shotRadius = MAX_RADIUS / (shotDistance + 1);
         double angleDiff = player.getAngle() - shot.angle;
 
-        if (shotDistance > MAX_RENDER_DIST || abs(angleDiff) > player.getFOV() / 2) continue;
+        if (shotDistance > MAX_RENDER_DIST || shotDistance > rayDistance || abs(angleDiff) > player.getFOV() / 2) continue;
 
         // Calculation of the shot position on the screen
         double radiusFactor = 1 - shotRadius / MAX_RADIUS;                              //< The bigger the radius, the higher the shot should be on the screen.
