@@ -16,7 +16,8 @@
 
 // TODO: Reorganize run function. Maybe move screen buffer and hConsole to main.cpp
 
-Game::Game() {
+Game::Game() 
+{
     map += "##################################################################";
     map += "#                             #                                  #";
     map += "#    #    #    ##########     #     #########################    #";
