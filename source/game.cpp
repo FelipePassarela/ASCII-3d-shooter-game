@@ -66,13 +66,7 @@ void Game::run()
         deltaTime = std::chrono::duration<double, std::milli>(currentTime - previousTime).count() / 1000;
         previousTime = currentTime;
 
-        int mouseDeltaX = 0;
-        POINT currentMousePos;
-        calcMouseDeltaX(currentMousePos, mouseDeltaX, lastMousePos);
-
-        resetMousePos();
-
-        readInput(mouseDeltaX);
+        readInput(lastMousePos);
 
         player.updateShots(map, MAP_WIDTH, deltaTime);
 
@@ -88,13 +82,6 @@ void Game::run()
 
     delete[] screen;
     CloseHandle(hConsole);
-}
-
-void Game::calcMouseDeltaX(POINT& currentMousePos, int& mouseDeltaX, POINT& lastMousePos)
-{
-    GetCursorPos(&currentMousePos);
-    mouseDeltaX = currentMousePos.x - lastMousePos.x;
-    lastMousePos = currentMousePos;
 }
 
 void Game::resetMousePos()
@@ -193,8 +180,16 @@ void Game::initialSetup()
     }
 }
 
-void Game::readInput(int mouseDeltaX)
+void Game::readInput(POINT& lastMousePos)
 {
+    // Calculate the change in the X-coordinate of the mouse pointer
+    int mouseDeltaX = 0;
+    POINT currentMousePos;
+    GetCursorPos(&currentMousePos);
+    mouseDeltaX = currentMousePos.x - lastMousePos.x;
+    lastMousePos = currentMousePos;
+    resetMousePos();
+
     movePlayer(mouseDeltaX);
 
     // This is necessary to toggle buttons
