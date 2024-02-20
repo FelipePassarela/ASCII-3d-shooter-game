@@ -14,8 +14,6 @@ void Ray::castRay(double playerX, double playerY, int mapWidth, int mapHeight, c
 {
     int newX = int(playerX);
     int newY = int(playerY);
-    int oldX = newX;
-    int oldY = newY;
 
     bool hit = false;
 
@@ -44,13 +42,6 @@ void Ray::castRay(double playerX, double playerY, int mapWidth, int mapHeight, c
             this->hitObjective = true;
             verifyBoundary(newX, newY, playerX, playerY);
         }
-        else if (newX != oldX || newY != oldY)
-        {
-            points.push_back(std::make_pair(newX, newY));
-        }
-
-        oldX = newX;
-        oldY = newY;
     }
 }
 
@@ -136,10 +127,6 @@ void Ray::castRayDDA(double playerX, double playerY, std::vector<std::string> ma
             else                distance = (sideDistY - deltaDistY);
             if (distance == 0)  distance = 0.1;
             hit = true;
-        }
-        else
-        {
-            points.push_back(std::make_pair(mapX, mapY));
         }
     }
 }

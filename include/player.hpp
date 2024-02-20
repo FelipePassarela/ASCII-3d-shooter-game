@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include "ray.hpp"
+#include "shot.hpp"
 #include "constants.hpp"
 
 /**
@@ -40,12 +41,12 @@ private:
     double x = 1;
     double y = 1;
     char tile = '>';
-    double angle = 0.0f;
+    double angle = 0.0f;        // The angle of the player's view in radians.
     double initialFOV = PI / 3.5;
     double FOV = initialFOV;
-    double speed = 5.0f;
-    double rotationSpeed = speed * 0.75f;
-    std::vector<Ray> rays;
+    double speed = 4.0f;
+    double rotationSpeed = speed * 0.75;
+    std::vector<Shot> shots;    // The shots fired by the player.   
 
     /**
      * @brief Fix player's position floating point imprecision
@@ -101,9 +102,9 @@ public:
         return FOV;
     }
 
-    std::vector<Ray> getRays() const
+    std::vector<Shot> getShots() const
     {
-        return rays;
+        return shots;
     }
 
     /* <------------------------ Setters ------------------------> */
@@ -149,12 +150,32 @@ public:
     void move(Direction direction, double deltaTime);
 
     /**
-     * Moves the player backwards in the specified direction.
+     * Rotates the player in the specified direction.
      * 
-     * @param direction The direction in which the player should move.
+     * @param direction The direction to rotate the player.
      * @param deltaTime The time elapsed since the last frame.
      */
-    void moveBack(Direction direction, double deltaTime);
+    void rotate(Direction direction, double deltaTime);
+
+    /**
+     * @brief Shoots a projectile.
+     * 
+     * This function is responsible for shooting a projectile from the player's position.
+     * The function shoots according to the rate of fire.
+     */
+    void shoot();
+
+    /**
+     * @brief Updates the shots fired by the player.
+     * 
+     * This function updates the positions of the shots fired by the player based on the current game map,
+     * the width of the map, and the time elapsed since the last update.
+     * 
+     * @param map The game map represented as a string.
+     * @param mapWidth The width of the game map.
+     * @param deltaTime The time elapsed since the last update.
+     */
+    void updateShots(const std::string& map, int mapWidth, double deltaTime);
 
     /**
      * Checks if the player is at the specified position.
@@ -179,24 +200,6 @@ public:
      * @param deltaTime The time elapsed since the last frame.
      */
     void increaseFOV(double deltaTime);
-
-    /**
-     * @brief Adds a ray to the player's list of rays.
-     * 
-     * @param ray The ray to be added.
-     */
-    void addRay(Ray& ray)
-    {
-        rays.push_back(ray);
-    }
-
-    /**
-     * @brief Clears the player's list of rays.
-     */
-    void clearRays()
-    {
-        rays.clear();
-    }
 };
 
 #endif  // PLAYER_HPP

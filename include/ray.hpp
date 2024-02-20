@@ -31,7 +31,6 @@ private:
     bool hitWall = false;
     bool hitObjective = false;
     bool hitBoundary = false;
-    std::vector<std::pair<int, int>> points;    ///< The points where the ray hits the map.
 
 public:
     Ray() {}
@@ -54,13 +53,6 @@ public:
 
     bool getHitBoundary() const { return hitBoundary; }
 
-    /**
-     * @brief Returns the points where the ray hits the map.
-     * 
-     * @return A vector containing the points where the ray hits the map.
-     */
-    std::vector<std::pair<int, int>> getPoints() const { return points; }
-
     /* <------------------------ Setters ------------------------> */
 
     void setAngle(double newAngle) { angle = newAngle; }
@@ -74,13 +66,6 @@ public:
     void setHitObjective(bool newHitObjective) { hitObjective = newHitObjective; }
 
     void setHitBoundary(bool newHitBoundary) { hitBoundary = newHitBoundary; }
-
-    /**
-     * @brief Sets the points where the ray hits the map.
-     * 
-     * @param newPoints A vector containing the points where the ray hits the map.
-     */
-    void setPoints(std::vector<std::pair<int, int>> newPoints) { points = newPoints; }
 
     /* <------------------------ Methods ------------------------> */
 

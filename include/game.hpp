@@ -51,19 +51,37 @@ private:
     void initialSetup();
 
     /**
+     * @brief Resets the position of the mouse.
+     */
+    void resetMousePos();
+
+    /**
      * @brief Reads the user input.
      * 
-     * This function is responsible for reading the user input and updating the game state.
+     * @param lastMousePos The last position of the mouse pointer.
      */
-    void readInput();
+    void readInput(POINT& lastMousePos);
 
     /**
      * @brief Moves the player in the game.
      * 
      * This function is responsible for moving the player character in the game.
      * It updates the player's position based on user input.
+     * 
+     * @param mouseDeltaX The change in the x-coordinate of the mouse.
      */
-    void movePlayer();
+    void movePlayer(int mouseDeltaX);
+
+    /**
+     * Calculates the angle between two vectors.
+     *
+     * @param x1 The x-coordinate of the first vector.
+     * @param y1 The y-coordinate of the first vector.
+     * @param x2 The x-coordinate of the second vector.
+     * @param y2 The y-coordinate of the second vector.
+     * @return The angle between the two vectors in radians.
+     */
+    double angleBetweenVectors(double x1, double y1, double x2, double y2);
 
     /**
      * @brief Finds the path to the objective.
@@ -81,6 +99,16 @@ private:
      * @param screen The screen buffer to render the objects on.
      */
     void render2dObjects(wchar_t* screen);
+
+    /**
+     * Renders the player shots on the screen.
+     * 
+     * @param screen The screen buffer to render on.
+     * @param x The x-coordinate of the player's position.
+     * @param y The y-coordinate of the player's position.
+     * @param rayDistance The distance of the ray to the wall.
+     */
+    void renderPlayerShots(wchar_t* screen, int x, int y, double rayDistance);
 
     /**
      * @brief Displays debug information on the screen.

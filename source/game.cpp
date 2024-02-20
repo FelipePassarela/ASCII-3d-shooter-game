@@ -14,7 +14,10 @@
 #include <cmath>
 #include <random>
 
-Game::Game() {
+// TODO: Reorganize run function. Maybe move screen buffer and hConsole to main.cpp
+
+Game::Game() 
+{
     map += "##################################################################";
     map += "#                             #                                  #";
     map += "#    #    #    ##########     #     #########################    #";
@@ -53,6 +56,9 @@ void Game::run()
     SetConsoleActiveScreenBuffer(hConsole);
     DWORD dwBytesWritten = 0;
 
+    POINT lastMousePos;
+    GetCursorPos(&lastMousePos);
+
     auto previousTime = std::chrono::high_resolution_clock::now();
     while (running)
     {
@@ -60,7 +66,9 @@ void Game::run()
         deltaTime = std::chrono::duration<double, std::milli>(currentTime - previousTime).count() / 1000;
         previousTime = currentTime;
 
-        readInput();
+        readInput(lastMousePos);
+
+        player.updateShots(map, MAP_WIDTH, deltaTime);
 
         if (showPathToObjective)                                        findPathToObjective();
         if (player.isAtPosition(objective.getX(), objective.getY()))    objective.randomizePosition(MAP_WIDTH, MAP_HEIGHT, map);
@@ -76,18 +84,25 @@ void Game::run()
     CloseHandle(hConsole);
 }
 
+void Game::resetMousePos()
+{
+    // TODO: Reset the mouse position to the center of the console window.
+    POINT p;
+    GetCursorPos(&p);
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+    if (p.x < screenWidth / 2 - 300 || p.x > screenWidth / 2 + 300)
+        SetCursorPos(screenWidth / 2, screenHeight / 2);
+}
+
 void Game::render3dScene(wchar_t* screen)
 {
-    player.clearRays();
-
     for (int x = 0; x < SCREEN_WIDTH; x++)
     {
         double rayAngle = (player.getAngle() + player.getFOV() / 2.0) - (x / float(SCREEN_WIDTH)) * player.getFOV();
         Ray ray(rayAngle);
 
         ray.castRay(player.getX(), player.getY(), MAP_WIDTH, MAP_HEIGHT, map, objective);
-        player.addRay(ray);
-
         wchar_t wallTile = createWallTileByRay(ray);
 
         renderScreenByHeight(ray, screen, x, wallTile);
@@ -111,6 +126,8 @@ void Game::renderScreenByHeight(Ray& ray, wchar_t* screen, int x, wchar_t wallTi
             else if (floorDistance < 0.75)      screen[y * SCREEN_WIDTH + x] = '.';
             else                                screen[y * SCREEN_WIDTH + x] = ' ';
         }
+
+        renderPlayerShots(screen, x, y, ray.getDistance());
     }
 }
 
@@ -163,9 +180,17 @@ void Game::initialSetup()
     }
 }
 
-void Game::readInput()
+void Game::readInput(POINT& lastMousePos)
 {
-    movePlayer();
+    // Calculate the change in the X-coordinate of the mouse pointer
+    int mouseDeltaX = 0;
+    POINT currentMousePos;
+    GetCursorPos(&currentMousePos);
+    mouseDeltaX = currentMousePos.x - lastMousePos.x;
+    lastMousePos = currentMousePos;
+    resetMousePos();
+
+    movePlayer(mouseDeltaX);
 
     // This is necessary to toggle buttons
     static bool wasMPressed = false;
@@ -184,7 +209,8 @@ void Game::readInput()
     }
     if (!wasMPressed && isMPressed)             showMap = !showMap;
     if (!wasPPressed && isPPressed && showMap)  showPathToObjective = !showPathToObjective; // Only show path if map is shown
-    if (GetAsyncKeyState(VK_SPACE) & 0x8000)    player.increaseFOV(deltaTime);
+    if (GetAsyncKeyState('Q') & 0x8000)         player.increaseFOV(deltaTime);
+    if (GetAsyncKeyState(VK_SPACE) & 0x8000)    player.shoot();
     if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)   running = false;
 
     wasMPressed = isMPressed;
@@ -192,16 +218,17 @@ void Game::readInput()
     wasPPressed = isPPressed;
 }
 
-void Game::movePlayer()
+void Game::movePlayer(int mouseDeltaX)
 {
-    Direction direction = Direction::NONE;
+    double lastPlayerX = player.getX();
+    double lastPlayerY = player.getY();
 
-    if (GetAsyncKeyState('W') & 0x8000)     direction = Direction::UP;
-    if (GetAsyncKeyState('A') & 0x8000)     direction = Direction::LEFT;
-    if (GetAsyncKeyState('S') & 0x8000)     direction = Direction::DOWN;
-    if (GetAsyncKeyState('D') & 0x8000)     direction = Direction::RIGHT;
-
-    player.move(direction, deltaTime);
+    if (GetAsyncKeyState('W') & 0x8000)     player.move(Direction::UP, deltaTime);
+    if (GetAsyncKeyState('S') & 0x8000)     player.move(Direction::DOWN, deltaTime);
+    if (GetAsyncKeyState('A') & 0x8000)     player.move(Direction::LEFT, deltaTime);
+    if (GetAsyncKeyState('D') & 0x8000)     player.move(Direction::RIGHT, deltaTime);
+    if (mouseDeltaX < 0)                    player.rotate(Direction::LEFT, deltaTime);
+    if (mouseDeltaX > 0)                    player.rotate(Direction::RIGHT, deltaTime);
 
     int playerX = int(player.getX());
     int playerY = int(player.getY());
@@ -210,7 +237,53 @@ void Game::movePlayer()
         playerY <= 0 || playerY >= MAP_HEIGHT ||
         map[playerY * MAP_WIDTH + playerX] == '#')
     {
-        player.moveBack(direction, deltaTime);
+        player.setX(lastPlayerX);
+        player.setY(lastPlayerY);
+    }
+}
+
+void Game::renderPlayerShots(wchar_t* screen, int x, int y, double rayDistance)
+{
+    // TODO: Refactor this function to use linear algebra to calculate the shot position on the screen
+    // TODO: Make the shots shine
+    for (Shot& shot : player.getShots()) 
+    {
+        const int MAX_RADIUS = 15;
+        const double MAX_RENDER_DIST = 16.0;
+        double shotDistance = sqrt(pow(shot.x - player.getX(), 2) + pow(shot.y - player.getY(), 2));
+        double shotRadius = MAX_RADIUS / (shotDistance + 1);
+        double angleDiff = player.getAngle() - shot.angle;
+
+        if (shotDistance > MAX_RENDER_DIST || shotDistance > rayDistance || abs(angleDiff) > player.getFOV() / 2) continue;
+
+        // Calculation of the shot position on the screen
+        double radiusFactor = 1 - shotRadius / MAX_RADIUS;                              //< The bigger the radius, the higher the shot should be on the screen.
+        double horizontalPerspectiveFactor = 1 - angleDiff / (player.getFOV() / 2);     //< When shooting in wide angles, the shot should be more to the side.
+
+        double shotScreenY = SCREEN_HEIGHT - radiusFactor * (SCREEN_HEIGHT / 2);
+        double shotScreenX = SCREEN_WIDTH - radiusFactor * horizontalPerspectiveFactor * (SCREEN_WIDTH / 2) ;
+        
+        #ifdef DEBUG
+        if (shotScreenX > 0 && shotScreenX < SCREEN_WIDTH && shotScreenY > 0 && shotScreenY < SCREEN_HEIGHT)
+        {
+            screen[int(shotScreenY) * SCREEN_WIDTH] = '>';
+            screen[int(shotScreenX)] = 'v';
+        }
+        #endif
+
+        double dx = x - shotScreenX;
+        double dy = (y - shotScreenY) * 2.0;   // Multiply by 2 to make the shot more round
+        double distanceFromShot = sqrt(dx * dx + dy * dy);
+
+        if (distanceFromShot <= shotRadius)
+        {
+            wchar_t tile = L' ';
+            if (shotDistance < MAX_RENDER_DIST / 3.5)          tile = 0x2588;  // Closest
+            else if (shotDistance < MAX_RENDER_DIST / 3.0)     tile = 0x2593;
+            else if (shotDistance < MAX_RENDER_DIST / 2.0)     tile = 0x2592;
+            else if (shotDistance <= MAX_RENDER_DIST)          tile = 0x2591;  // Farthest
+            screen[y * SCREEN_WIDTH + x] = tile;
+        }
     }
 }
 
@@ -250,17 +323,6 @@ void Game::render2dObjects(wchar_t* screen)
             }
         }
 
-        // Draw the player's rays
-        for (Ray ray : player.getRays())
-        {
-            for (std::pair<int, int>& point : ray.getPoints())
-            {
-                int rayX = point.first;
-                int rayY = point.second;
-                screen[(rayY + yOffset) * SCREEN_WIDTH + rayX] = '-';
-            }
-        }
-
         // Draw the path to the objective
         if (showPathToObjective)
         {
@@ -272,10 +334,18 @@ void Game::render2dObjects(wchar_t* screen)
             }
         }
 
+        // Draw the player's shoots on map.
+        for (Shot& shot : player.getShots())
+        {
+            screen[(int(shot.y) + yOffset) * SCREEN_WIDTH + int(shot.x)] = '*';
+        }
+
         // Draw the objective and the player
         screen[int((objective.getY()) + yOffset) * SCREEN_WIDTH + int(objective.getX())] = objective.getTile();
         screen[(int(player.getY()) + yOffset) * SCREEN_WIDTH + int(player.getX())] = player.getTile();
     }
+
+    screen[(SCREEN_HEIGHT / 2) * SCREEN_WIDTH + SCREEN_WIDTH / 2] = '+';
 }
 
 void Game::showDebugInfo(wchar_t* screen, size_t& yOffset)
