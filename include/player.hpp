@@ -46,7 +46,6 @@ private:
     double FOV = initialFOV;
     double speed = 4.0f;
     double rotationSpeed = speed * 0.75;
-    std::vector<Ray> rays;      // The rays cast by the player.
     std::vector<Shot> shots;    // The shots fired by the player.   
 
     /**
@@ -101,11 +100,6 @@ public:
     double getFOV() const
     {
         return FOV;
-    }
-
-    std::vector<Ray> getRays() const
-    {
-        return rays;
     }
 
     std::vector<Shot> getShots() const
@@ -206,24 +200,6 @@ public:
      * @param deltaTime The time elapsed since the last frame.
      */
     void increaseFOV(double deltaTime);
-
-    /**
-     * @brief Adds a ray to the player's list of rays.
-     * 
-     * @param ray The ray to be added.
-     */
-    void addRay(Ray& ray)
-    {
-        rays.push_back(ray);
-    }
-
-    /**
-     * @brief Clears the player's list of rays.
-     */
-    void clearRays()
-    {
-        rays.clear();
-    }
 };
 
 #endif  // PLAYER_HPP
