@@ -104,11 +104,8 @@ private:
      * Renders the player shots on the screen.
      * 
      * @param screen The screen buffer to render on.
-     * @param x The x-coordinate of the player's position.
-     * @param y The y-coordinate of the player's position.
-     * @param rayDistance The distance of the ray to the wall.
      */
-    void renderPlayerShots(wchar_t* screen, int x, int y, double rayDistance);
+    void renderPlayerShots(wchar_t* screen);
 
     /**
      * @brief Displays debug information on the screen.

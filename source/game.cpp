@@ -126,8 +126,6 @@ void Game::renderScreenByHeight(Ray& ray, wchar_t* screen, int x, wchar_t wallTi
             else if (floorDistance < 0.75)      screen[y * SCREEN_WIDTH + x] = '.';
             else                                screen[y * SCREEN_WIDTH + x] = ' ';
         }
-
-        renderPlayerShots(screen, x, y, ray.getDistance());
     }
 }
 
@@ -242,18 +240,25 @@ void Game::movePlayer(int mouseDeltaX)
     }
 }
 
-void Game::renderPlayerShots(wchar_t* screen, int x, int y, double rayDistance)
+void Game::renderPlayerShots(wchar_t* screen)
 {
     // TODO: Refactor this function to use linear algebra to calculate the shot position on the screen
     for (Shot& shot : player.getShots()) 
     {
         const int MAX_RADIUS = 15;
         const double MAX_RENDER_DIST = 16.0;
+
         double shotDistance = sqrt(pow(shot.x - player.getX(), 2) + pow(shot.y - player.getY(), 2));
         double shotRadius = MAX_RADIUS / (shotDistance + 1);
         double angleDiff = player.getAngle() - shot.angle;
 
-        if (shotDistance > MAX_RENDER_DIST || shotDistance > rayDistance || abs(angleDiff) > player.getFOV() / 2) continue;
+        // Cast a ray from the player to the shot to check if there isn't a obstacle between them.
+        // If it doesn't hit the the shot, the distance will be lower than shotDistance.
+        Ray ray(shot.angle);
+        ray.setMaxDepth(MAX_RENDER_DIST);
+        ray.castRay(player.getX(), player.getY(), MAP_WIDTH, MAP_HEIGHT, map, objective);
+
+        if (ray.getDistance() < shotDistance || abs(angleDiff) > player.getFOV() / 2) continue;
 
         // Calculation of the shot position on the screen
         double radiusFactor = 1 - shotRadius / MAX_RADIUS;                              //< The bigger the radius, the higher the shot should be on the screen.
@@ -270,19 +275,28 @@ void Game::renderPlayerShots(wchar_t* screen, int x, int y, double rayDistance)
         }
         #endif
 
-        double dx = x - shotScreenX;
-        double dy = (y - shotScreenY) * 2.0;   // Multiply by 2 to make the shot more round
-        double distanceFromShot = sqrt(dx * dx + dy * dy);
-
-        if (distanceFromShot <= shotRadius)
+        // Render the shot on the screen
+        for (int x = shotScreenX - shotRadius; x < shotScreenX + shotRadius; x++)
         {
-            wchar_t tile = L' ';
-            double brightness = (sin(2 * PI * (distanceFromShot / MAX_RADIUS)) + 1) / 2; // Varies between 0 and 1
-            if (brightness > 0.75)       tile = 0x2588;
-            else if (brightness > 0.5)   tile = 0x2593;
-            else if (brightness > 0.25)  tile = 0x2592;
-            else                         tile = 0x2591;
-            screen[y * SCREEN_WIDTH + x] = tile;
+            for (int y = shotScreenY - shotRadius; y < shotScreenY + shotRadius; y++)
+            {
+                if (x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT) continue;
+
+                double dx = x - shotScreenX;
+                double dy = (y - shotScreenY) * 2.0;   // Multiply by 2 to make the shot more round
+                double distanceFromShot = sqrt(dx * dx + dy * dy);
+
+                if (distanceFromShot <= shotRadius)
+                {
+                    wchar_t tile = L' ';
+                    double brightness = (sin(2 * PI * (distanceFromShot / MAX_RADIUS)) + 1) / 2; // Varies between 0 and 1 according to radius
+                    if (brightness > 0.75)       tile = 0x2588;
+                    else if (brightness > 0.5)   tile = 0x2593;
+                    else if (brightness > 0.25)  tile = 0x2592;
+                    else                         tile = 0x2591;
+                    screen[y * SCREEN_WIDTH + x] = tile;
+                }
+            }
         }
     }
 }
@@ -344,6 +358,8 @@ void Game::render2dObjects(wchar_t* screen)
         screen[int((objective.getY()) + yOffset) * SCREEN_WIDTH + int(objective.getX())] = objective.getTile();
         screen[(int(player.getY()) + yOffset) * SCREEN_WIDTH + int(player.getX())] = player.getTile();
     }
+
+    renderPlayerShots(screen);
 
     screen[(SCREEN_HEIGHT / 2) * SCREEN_WIDTH + SCREEN_WIDTH / 2] = '+';
 }
