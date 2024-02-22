@@ -245,7 +245,6 @@ void Game::movePlayer(int mouseDeltaX)
 void Game::renderPlayerShots(wchar_t* screen, int x, int y, double rayDistance)
 {
     // TODO: Refactor this function to use linear algebra to calculate the shot position on the screen
-    // TODO: Make the shots shine
     for (Shot& shot : player.getShots()) 
     {
         const int MAX_RADIUS = 15;
@@ -278,10 +277,11 @@ void Game::renderPlayerShots(wchar_t* screen, int x, int y, double rayDistance)
         if (distanceFromShot <= shotRadius)
         {
             wchar_t tile = L' ';
-            if (shotDistance < MAX_RENDER_DIST / 3.5)          tile = 0x2588;  // Closest
-            else if (shotDistance < MAX_RENDER_DIST / 3.0)     tile = 0x2593;
-            else if (shotDistance < MAX_RENDER_DIST / 2.0)     tile = 0x2592;
-            else if (shotDistance <= MAX_RENDER_DIST)          tile = 0x2591;  // Farthest
+            double brightness = (sin(2 * PI * (distanceFromShot / MAX_RADIUS)) + 1) / 2; // Varies between 0 and 1
+            if (brightness > 0.75)       tile = 0x2588;
+            else if (brightness > 0.5)   tile = 0x2593;
+            else if (brightness > 0.25)  tile = 0x2592;
+            else                         tile = 0x2591;
             screen[y * SCREEN_WIDTH + x] = tile;
         }
     }
