@@ -325,6 +325,8 @@ void Game::render2dObjects(wchar_t* screen)
     size_t yOffset = 0;
 
     showDebugInfo(screen, yOffset);
+    
+    renderPlayerShots(screen);
 
     if (showMap)
     {
@@ -358,8 +360,6 @@ void Game::render2dObjects(wchar_t* screen)
         screen[int((objective.getY()) + yOffset) * SCREEN_WIDTH + int(objective.getX())] = objective.getTile();
         screen[(int(player.getY()) + yOffset) * SCREEN_WIDTH + int(player.getX())] = player.getTile();
     }
-
-    renderPlayerShots(screen);
 
     screen[(SCREEN_HEIGHT / 2) * SCREEN_WIDTH + SCREEN_WIDTH / 2] = '+';
 }
