@@ -15,6 +15,8 @@
 #include <random>
 
 // TODO: Reorganize run function. Maybe move screen buffer and hConsole to main.cpp
+// TODO: Reset the mouse position to the center of the console window.
+// TODO: Refactor renderPlayerShots to use linear algebra to calculate the shot position on the screen
 
 Game::Game() 
 {
@@ -86,7 +88,6 @@ void Game::run()
 
 void Game::resetMousePos()
 {
-    // TODO: Reset the mouse position to the center of the console window.
     POINT p;
     GetCursorPos(&p);
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
@@ -103,7 +104,7 @@ void Game::render3dScene(wchar_t* screen)
         Ray ray(rayAngle);
 
         ray.castRay(player.getX(), player.getY(), MAP_WIDTH, MAP_HEIGHT, map, objective);
-        wchar_t wallTile = createWallTileByRay(ray);
+        wchar_t wallTile = createWallTile(ray);
 
         renderScreenByHeight(ray, screen, x, wallTile);
     }
@@ -129,7 +130,7 @@ void Game::renderScreenByHeight(Ray& ray, wchar_t* screen, int x, wchar_t wallTi
     }
 }
 
-wchar_t Game::createWallTileByRay(Ray& ray)
+wchar_t Game::createWallTile(Ray& ray)
 {
     wchar_t wallTile = ' ';
     
@@ -242,7 +243,6 @@ void Game::movePlayer(int mouseDeltaX)
 
 void Game::renderPlayerShots(wchar_t* screen)
 {
-    // TODO: Refactor this function to use linear algebra to calculate the shot position on the screen
     for (Shot& shot : player.getShots()) 
     {
         const int MAX_RADIUS = 15;

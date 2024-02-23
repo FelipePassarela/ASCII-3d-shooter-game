@@ -73,17 +73,6 @@ private:
     void movePlayer(int mouseDeltaX);
 
     /**
-     * Calculates the angle between two vectors.
-     *
-     * @param x1 The x-coordinate of the first vector.
-     * @param y1 The y-coordinate of the first vector.
-     * @param x2 The x-coordinate of the second vector.
-     * @param y2 The y-coordinate of the second vector.
-     * @return The angle between the two vectors in radians.
-     */
-    double angleBetweenVectors(double x1, double y1, double x2, double y2);
-
-    /**
      * @brief Finds the path to the objective.
      * 
      * This function calculates the path from the current position to the objective.
@@ -129,7 +118,7 @@ private:
      * @param ray The Ray object representing the ray to calculate the wall tile for.
      * @return The wall tile represented by a wide character (wchar_t).
      */
-    wchar_t createWallTileByRay(Ray& ray);
+    wchar_t createWallTile(Ray& ray);
 
     /**
      * Renders the 3D scene on the screen.
