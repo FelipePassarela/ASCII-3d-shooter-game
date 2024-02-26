@@ -65,7 +65,8 @@ void Game::run()
     while (running)
     {
         auto currentTime = std::chrono::high_resolution_clock::now();
-        deltaTime = std::chrono::duration<double, std::milli>(currentTime - previousTime).count() / 1000;
+        deltaTime = std::chrono::duration<double>(currentTime - previousTime).count();
+        if (deltaTime == 0.0) deltaTime = 0.0001;
         previousTime = currentTime;
 
         readInput(lastMousePos);
@@ -258,7 +259,7 @@ void Game::renderPlayerShots(wchar_t* screen)
         ray.setMaxDepth(MAX_RENDER_DIST);
         ray.castRay(player.getX(), player.getY(), MAP_WIDTH, MAP_HEIGHT, map, objective);
 
-        if (ray.getDistance() < shotDistance || abs(angleDiff) > player.getFOV() / 2) continue;
+        if (ray.getDistance() < shotDistance || fabs(angleDiff) > player.getFOV() / 2) continue;
 
         // Calculation of the shot position on the screen
         double radiusFactor = 1 - shotRadius / MAX_RADIUS;                              //< The bigger the radius, the higher the shot should be on the screen.
@@ -372,10 +373,10 @@ void Game::showDebugInfo(wchar_t* screen, size_t& yOffset)
 
     static double fps = 0.0;
 
-    wchar_t* debug = new wchar_t[SCREEN_WIDTH];
-    swprintf_s(debug, SCREEN_WIDTH, L"X=%3.2lf Y=%3.2lf A=%3.2lfpi FOV=%3.2lfpi FPS=%3.2lf",
-               player.getX(), player.getY(), player.getAngle() / PI, player.getFOV() / PI, fps);
-    for (std::size_t i = 0; i < wcslen(debug); ++i)
+    char* debug = new char[SCREEN_WIDTH];
+    snprintf(debug, SCREEN_WIDTH, "X=%3.2lf Y=%3.2lf A=%3.2lfpi FOV=%3.2lfpi FPS=%4.2lf",
+             player.getX(), player.getY(), player.getAngle() / PI, player.getFOV() / PI, fps);
+    for (std::size_t i = 0; i < strlen(debug); ++i)
     {
         screen[i] = debug[i];
     }
