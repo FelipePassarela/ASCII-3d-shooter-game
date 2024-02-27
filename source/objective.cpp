@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2024
  * 
  */
+
 #include "objective.hpp"
 
 std::mt19937 gen(std::random_device{}());

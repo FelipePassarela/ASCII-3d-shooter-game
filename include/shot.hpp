@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2024
  * 
  */
+
 #ifndef SHOT_HPP
 #define SHOT_HPP
 

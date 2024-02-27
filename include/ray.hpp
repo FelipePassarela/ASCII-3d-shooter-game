@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2024
  * 
  */
+
 #ifndef RAY_HPP
 #define RAY_HPP
 
@@ -112,7 +113,7 @@ public:
      * 
      * @param playerA The player's view angle in radians.
      */
-    void fixFishEyeEffect(double playerA) { distance *= cosf(angle - playerA); }
+    void fixFishEyeEffect(double playerA) { distance *= cos(angle - playerA); }
 };
 
 #endif  // RAY_HPP

@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2024
  * 
  */
+
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
@@ -184,7 +185,7 @@ public:
      * @param y The y-coordinate of the position.
      * @return True if the player is at the specified position, false otherwise.
      */
-    bool isAtPosition(int x, int y)
+    bool isAtPosition(int x, int y) const
     {
         return (int)this->x == x && (int)this->y == y;
     }

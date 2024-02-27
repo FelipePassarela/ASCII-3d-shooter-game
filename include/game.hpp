@@ -6,6 +6,7 @@
  * 
  * @copyright Copyright (c) 2024
  */
+
 #ifndef GAME_HPP
 #define GAME_HPP
 
@@ -32,7 +33,7 @@ private:
     const int MAP_HEIGHT = 27;     
     const int SCREEN_WIDTH = 120;           
     const int SCREEN_HEIGHT = 40;           
-    double deltaTime;                                   // The time between frames.
+    double deltaTime = 0.0;                             // The time between frames.
     Player player;
     Objective objective;                                // The objective of the game.
     std::vector<std::pair<int, int>> pathToObjective;
@@ -118,7 +119,7 @@ private:
      * @param ray The Ray object representing the ray to calculate the wall tile for.
      * @return The wall tile represented by a wide character (wchar_t).
      */
-    wchar_t createWallTile(Ray& ray);
+    wchar_t createWallTile(Ray& ray) const;
 
     /**
      * Renders the 3D scene on the screen.

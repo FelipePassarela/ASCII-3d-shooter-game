@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2024
  * 
  */
+
 #include "player.hpp"
 #include "constants.hpp"
 #include <cmath>
@@ -22,23 +23,23 @@ void Player::move(Direction direction, double deltaTime)
 
     if (direction == Direction::LEFT)
     {
-        x = x - correctedSpeed * sinf(angle);
-        y = y - correctedSpeed * cosf(angle);
+        x = x - correctedSpeed * sin(angle);
+        y = y - correctedSpeed * cos(angle);
     }
     else if (direction == Direction::RIGHT)
     {
-        x = x + correctedSpeed * sinf(angle);
-        y = y + correctedSpeed * cosf(angle);
+        x = x + correctedSpeed * sin(angle);
+        y = y + correctedSpeed * cos(angle);
     }
     else if (direction == Direction::UP)
     {
-        x = x + correctedSpeed * cosf(angle);           // Formula: X = X0 + t * Dx. Source: https://en.wikipedia.org/wiki/Ray_casting                                           
-        y = y - correctedSpeed * sinf(angle);           // X0 is the initial position, t is the parameter (speed in this context), and  
-    }                                                   // Dx is the direction vector
+        x = x + correctedSpeed * cos(angle);    // Formula: X = X0 + t * Dx. Source: https://en.wikipedia.org/wiki/Ray_casting                                           
+        y = y - correctedSpeed * sin(angle);    // X0 is the initial position, t is the parameter (speed in this context), and  
+    }                                           // Dx is the direction vector
     else if (direction == Direction::DOWN)
     {
-        x = x - correctedSpeed * cosf(angle);     
-        y = y + correctedSpeed * sinf(angle);
+        x = x - correctedSpeed * cos(angle);     
+        y = y + correctedSpeed * sin(angle);
     }
 
     if (angle > 2 * PI)         angle -= 2 * PI;

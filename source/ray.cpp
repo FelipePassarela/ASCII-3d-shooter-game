@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2024
  * 
  */
+
 #include "ray.hpp"
 #include <algorithm>
 
@@ -21,9 +22,9 @@ void Ray::castRay(double playerX, double playerY, int mapWidth, int mapHeight, c
     {
         distance += 0.1;
 
-        newX = int(playerX + distance * cosf(angle));       // Formula: X = X0 + t * Dx. Source: https://en.wikipedia.org/wiki/Ray_casting. 
-        newY = int(playerY - distance * sinf(angle));       // X0 is the initial position, t is the parameter (distance here), and Dx is 
-                                                            // the direction vector.
+        newX = int(playerX + distance * cos(angle));    // Formula: X = X0 + t * Dx. Source: https://en.wikipedia.org/wiki/Ray_casting. 
+        newY = int(playerY - distance * sin(angle));    // X0 is the initial position, t is the parameter (distance here), and Dx is 
+                                                        // the direction vector.
 
         if (newX < 0 || newX >= mapWidth || newY < 0 || newY >= mapHeight)
         {
@@ -59,7 +60,7 @@ void Ray::verifyBoundary(int mapX, int mapY, double playerX, double playerY)
             double vy = (double)mapY + ty - playerY;
             double vx = (double)mapX + tx - playerX;
             double d = sqrt(vx * vx + vy * vy);
-            double dot = (cosf(angle) * vx / d) + (-sinf(angle) * vy / d);
+            double dot = (cos(angle) * vx / d) + (-sin(angle) * vy / d);
             p.push_back(std::make_pair(d, dot));
         }
     }

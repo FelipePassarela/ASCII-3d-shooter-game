@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2024
  * 
  */
+
 #include "AStar.hpp"
 #include <algorithm>
 #include <cmath>
@@ -72,7 +73,7 @@ double AStar::Utils::heuristic(int startX, int startY, int endX, int endY)
 
 bool AStar::Utils::isNodeInList(const NodePtr node, const NodeList& list)
 {
-    for (auto n : list)
+    for (auto& n : list)
     {
         if (*n == *node) return true;
     }

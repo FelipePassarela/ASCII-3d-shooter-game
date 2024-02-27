@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2024
  * 
  */
+
 #include "game.hpp"
 #include "constants.hpp"
 #include <thread>
@@ -131,7 +132,7 @@ void Game::renderScreenByHeight(Ray& ray, wchar_t* screen, int x, wchar_t wallTi
     }
 }
 
-wchar_t Game::createWallTile(Ray& ray)
+wchar_t Game::createWallTile(Ray& ray) const
 {
     wchar_t wallTile = ' ';
     
@@ -265,8 +266,8 @@ void Game::renderPlayerShots(wchar_t* screen)
         double radiusFactor = 1 - shotRadius / MAX_RADIUS;                              //< The bigger the radius, the higher the shot should be on the screen.
         double horizontalPerspectiveFactor = 1 - angleDiff / (player.getFOV() / 2);     //< When shooting in wide angles, the shot should be more to the side.
 
-        double shotScreenY = SCREEN_HEIGHT - radiusFactor * (SCREEN_HEIGHT / 2);
-        double shotScreenX = SCREEN_WIDTH - radiusFactor * horizontalPerspectiveFactor * (SCREEN_WIDTH / 2) ;
+        double shotScreenY = SCREEN_HEIGHT - radiusFactor * (SCREEN_HEIGHT / 2.0);
+        double shotScreenX = SCREEN_WIDTH - radiusFactor * horizontalPerspectiveFactor * (SCREEN_WIDTH / 2.0) ;
         
         #ifdef DEBUG
         if (shotScreenX > 0 && shotScreenX < SCREEN_WIDTH && shotScreenY > 0 && shotScreenY < SCREEN_HEIGHT)

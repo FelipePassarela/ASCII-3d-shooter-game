@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2024
  * 
  */
+
 #ifndef CONSTANTS_HPP
 #define CONSTANTS_HPP
 
