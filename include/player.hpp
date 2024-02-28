@@ -46,7 +46,7 @@ private:
     double initialFOV = PI / 3.5;
     double FOV = initialFOV;
     double speed = 4.0f;
-    double rotationSpeed = speed * 0.75;
+    double rotationSpeed = 10.0f;
     std::vector<Shot> shots;    // The shots fired by the player.   
 
     /**
