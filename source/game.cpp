@@ -269,7 +269,7 @@ void Game::renderPlayerShots(wchar_t* screen)
         double shotScreenY = SCREEN_HEIGHT - radiusFactor * (SCREEN_HEIGHT / 2.0);
         double shotScreenX = SCREEN_WIDTH - radiusFactor * horizontalPerspectiveFactor * (SCREEN_WIDTH / 2.0) ;
         
-        #ifdef DEBUG
+        #ifdef _DEBUG
         if (shotScreenX > 0 && shotScreenX < SCREEN_WIDTH && shotScreenY > 0 && shotScreenY < SCREEN_HEIGHT)
         {
             screen[int(shotScreenY) * SCREEN_WIDTH] = '>';
@@ -285,7 +285,7 @@ void Game::renderPlayerShots(wchar_t* screen)
                 if (x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT) continue;
 
                 double dx = x - shotScreenX;
-                double dy = (y - shotScreenY) * 2.0;   // Multiply by 2 to make the shot more round
+                double dy = (y - shotScreenY) * 2.0; // Multiply by 2 to make the shot more round
                 double distanceFromShot = sqrt(dx * dx + dy * dy);
 
                 if (distanceFromShot <= shotRadius)
@@ -310,7 +310,7 @@ void Game::findPathToObjective()
     int playerX = int(player.getX());
     int playerY = int(player.getY());
 
-    if (previousPlayerX != playerX || previousPlayerY != playerY)   // Only find path if the player has moved
+    if (previousPlayerX != playerX || previousPlayerY != playerY) // Only find path if the player has moved
     {
         int objectiveX = int(objective.getX());
         int objectiveY = int(objective.getY());
@@ -368,7 +368,7 @@ void Game::render2dObjects(wchar_t* screen)
 
 void Game::showDebugInfo(wchar_t* screen, size_t& yOffset)
 {
-    #ifdef DEBUG
+    #ifdef _DEBUG
     static auto previous = std::chrono::high_resolution_clock::now();
     auto current = std::chrono::high_resolution_clock::now();
 

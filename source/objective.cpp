@@ -32,11 +32,11 @@ void Objective::randomizePosition(int mapWidth, int mapHeight, const std::string
 
 void Objective::randomizeWallTile(wchar_t& wallTile, double rayDistance)
 {
-    wchar_t noiseChar = '\t';
+    const wchar_t noiseChar = '\t';
     std::uniform_int_distribution<> dis(0x1200, 0x137F); // Unicode range for ethiopic scripts
     std::uniform_int_distribution<> dis2(1, int(rayDistance * rayDistance * rayDistance) + 10); 
 
-    int random = dis2(gen);
+    const int random = dis2(gen);
 
     if (random == 1)    wallTile = noiseChar;
     else                wallTile = dis(gen); 
