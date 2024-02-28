@@ -14,6 +14,7 @@
 #include <chrono>
 #include <cmath>
 #include <random>
+#include <iomanip>
 
 // TODO: Reorganize run function. Maybe move screen buffer and hConsole to main.cpp
 // TODO: Reset the mouse position to the center of the console window.
@@ -373,10 +374,13 @@ void Game::showDebugInfo(wchar_t* screen, size_t& yOffset)
 
     static double fps = 0.0;
 
-    char* debug = new char[SCREEN_WIDTH];
-    snprintf(debug, SCREEN_WIDTH, "X=%3.2lf Y=%3.2lf A=%3.2lfpi FOV=%3.2lfpi FPS=%4.2lf",
-             player.getX(), player.getY(), player.getAngle() / PI, player.getFOV() / PI, fps);
-    for (std::size_t i = 0; i < strlen(debug); ++i)
+    std::string debug;
+    std::ostringstream oss;
+    oss << std::fixed << std::setprecision(2);
+    oss << "X=" << player.getX() << " Y=" << player.getY() << " Angle=" << player.getAngle();
+    oss << " FOV=" << player.getFOV() << " FPS=" << fps;
+    debug = oss.str();
+    for (std::size_t i = 0; i < debug.size(); ++i)
     {
         screen[i] = debug[i];
     }
@@ -388,7 +392,6 @@ void Game::showDebugInfo(wchar_t* screen, size_t& yOffset)
         previous = current;
     }
 
-    delete[] debug;
     yOffset++;
     #endif
 }
