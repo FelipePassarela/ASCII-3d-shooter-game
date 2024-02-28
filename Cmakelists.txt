@@ -8,8 +8,8 @@ file(GLOB_RECURSE SOURCES "source/*.cpp")
 add_executable(ASCII-shooter ${SOURCES})
 
 target_include_directories(ASCII-shooter PRIVATE "include")
-target_compile_options(ASCII-shooter PRIVATE -Wall -Wextra)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_options(ASCII-shooter PRIVATE -Wall -Wextra)
     add_compile_definitions(_DEBUG)
 endif()
