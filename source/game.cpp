@@ -291,11 +291,10 @@ void Game::renderPlayerShots(wchar_t* screen)
                 if (distanceFromShot <= shotRadius)
                 {
                     wchar_t tile = L' ';
-                    double brightness = (sin(2 * PI * (distanceFromShot / MAX_RADIUS)) + 1) / 2; // Varies between 0 and 1 according to radius
-                    if (brightness > 0.75)       tile = 0x2588;
-                    else if (brightness > 0.5)   tile = 0x2593;
-                    else if (brightness > 0.25)  tile = 0x2592;
-                    else                         tile = 0x2591;
+                    double brightness = distanceFromShot / shotRadius; // The closer to the center, the brighter the shot
+                    if (brightness < 0.5)       tile = 0x2588;
+                    else if (brightness < 0.75) tile = 0x2593;
+                    else                        tile = 0x2591;
                     screen[y * SCREEN_WIDTH + x] = tile;
                 }
             }
