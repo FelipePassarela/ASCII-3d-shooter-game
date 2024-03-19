@@ -1,3 +1,4 @@
 # ASCII-shooter-game
 
-![image](https://github.com/FelipePassarela/ASCII-shooter-game/assets/126916744/f1335013-2179-4cf5-9055-2ffd700b4bb3)
+https://github.com/FelipePassarela/ASCII-3d-shooter-game/assets/126916744/03a5c390-0ccb-43b4-bb10-47e8c96946e4
+
